@@ -1,0 +1,10 @@
+Repeat 8 times
+    Move 5
+    Turn right
+    Move 5
+    Turn right
+    Move 5
+    Turn right
+    Move 5
+    Turn right
+    Move 2

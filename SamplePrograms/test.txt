@@ -1,0 +1,11 @@
+Move 5
+Turn left
+Turn left
+Move 3
+Turn right
+Repeat 3 times
+    Move 1
+    Turn right
+Repeat 5 times
+    Move 2
+    Turn left
