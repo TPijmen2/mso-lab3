@@ -1,6 +1,4 @@
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using ProgrammingLearningApp;
-using System.Windows.Input;
+using ProgrammingLearningApp.Models;
 using Xunit;
 
 namespace ProgrammingLearningApp.Tests
