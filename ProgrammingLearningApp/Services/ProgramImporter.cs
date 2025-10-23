@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ProgrammingLearningApp.Services;
 
 namespace ProgrammingLearningApp
 {
@@ -9,15 +10,35 @@ namespace ProgrammingLearningApp
 	{
 		public Program ImportFromFile(string filePath)
 		{
+			LoggingService.Instance.LogInfo($"Importing program from file: {filePath}");
+			
 			if (!File.Exists(filePath))
+			{
+				LoggingService.Instance.LogError($"File not found: {filePath}");
 				throw new FileNotFoundException($"File not found: {filePath}");
+			}
 
-			string[] lines = File.ReadAllLines(filePath);
-			string programName = Path.GetFileNameWithoutExtension(filePath);
+			try
+			{
+				string[] lines = File.ReadAllLines(filePath);
+				string programName = Path.GetFileNameWithoutExtension(filePath);
 
-			var commands = ParseCommands(lines, 0, out int _);
+				LoggingService.Instance.LogDebug($"Parsing {lines.Length} lines from file");
+				var commands = ParseCommands(lines, 0, out int _);
 
-			return new Program(programName, commands);
+				LoggingService.Instance.LogInfo($"Successfully imported program '{programName}' with {commands.Count} top-level commands");
+				return new Program(programName, commands);
+			}
+			catch (FormatException ex)
+			{
+				LoggingService.Instance.LogError($"Format error while parsing program: {ex.Message}");
+				throw;
+			}
+			catch (Exception ex)
+			{
+				LoggingService.Instance.LogException(ex, $"Error importing program from {filePath}");
+				throw;
+			}
 		}
 
 		private List<ICommand> ParseCommands(string[] lines, int startIndex, out int endIndex)
@@ -45,36 +66,52 @@ namespace ProgrammingLearningApp
 					return commands;
 				}
 
-				if (trimmedLine.StartsWith("Move "))
+				try
 				{
-					int steps = int.Parse(trimmedLine.Substring(5));
-					commands.Add(new MoveCommand(steps));
-					i++;
-				}
-				else if (trimmedLine.StartsWith("Turn "))
-				{
-					string direction = trimmedLine.Substring(5);
-					TurnDirection turnDir = direction.ToLower() == "left"
-						? TurnDirection.Left
-						: TurnDirection.Right;
-					commands.Add(new TurnCommand(turnDir));
-					i++;
-				}
-				else if (trimmedLine.StartsWith("Repeat "))
-				{
-					// Parse "Repeat X times"
-					string[] parts = trimmedLine.Split(' ');
-					int times = int.Parse(parts[1]);
+					if (trimmedLine.StartsWith("Move "))
+					{
+						int steps = int.Parse(trimmedLine.Substring(5));
+						commands.Add(new MoveCommand(steps));
+						LoggingService.Instance.LogDebug($"Parsed command: Move {steps}");
+						i++;
+					}
+					else if (trimmedLine.StartsWith("Turn "))
+					{
+						string direction = trimmedLine.Substring(5);
+						TurnDirection turnDir = direction.ToLower() == "left"
+							? TurnDirection.Left
+							: TurnDirection.Right;
+						commands.Add(new TurnCommand(turnDir));
+						LoggingService.Instance.LogDebug($"Parsed command: Turn {direction}");
+						i++;
+					}
+					else if (trimmedLine.StartsWith("Repeat "))
+					{
+						// Parse "Repeat X times"
+						string[] parts = trimmedLine.Split(' ');
+						int times = int.Parse(parts[1]);
 
-					// Parse the commands inside the repeat block
-					i++; // Move to first command inside repeat
-					var repeatCommands = ParseCommands(lines, i, out int nextIndex);
-					commands.Add(new RepeatCommand(times, repeatCommands));
-					i = nextIndex;
+						// Parse the commands inside the repeat block
+						i++; // Move to first command inside repeat
+						var repeatCommands = ParseCommands(lines, i, out int nextIndex);
+						commands.Add(new RepeatCommand(times, repeatCommands));
+						LoggingService.Instance.LogDebug($"Parsed command: Repeat {times} times with {repeatCommands.Count} sub-commands");
+						i = nextIndex;
+					}
+					else
+					{
+						LoggingService.Instance.LogError($"Unknown command at line {i + 1}: {trimmedLine}");
+						throw new FormatException($"Unknown command: {trimmedLine}");
+					}
 				}
-				else
+				catch (FormatException)
 				{
-					throw new FormatException($"Unknown command: {trimmedLine}");
+					throw;
+				}
+				catch (Exception ex)
+				{
+					LoggingService.Instance.LogError($"Error parsing line {i + 1}: {trimmedLine} - {ex.Message}");
+					throw new FormatException($"Error parsing command at line {i + 1}: {trimmedLine}", ex);
 				}
 			}
 
