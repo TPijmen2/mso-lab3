@@ -1,0 +1,210 @@
+﻿<Window x:Class="ProgrammingLearningApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:ProgrammingLearningApp.UI.Controls"
+        Title="CodeCat - Programming Learning App" 
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- Button Styles -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#45a049"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#2196F3"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0b7dda"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Load Program..." Click="LoadProgram_Click"/>
+                <MenuItem Header="Load Basic Example" Click="LoadBasicExample_Click"/>
+                <MenuItem Header="Load Advanced Example" Click="LoadAdvancedExample_Click"/>
+                <MenuItem Header="Load Expert Example" Click="LoadExpertExample_Click"/>
+                <Separator/>
+                <MenuItem Header="Export Program..." Click="ExportProgram_Click"/>
+                <Separator/>
+                <MenuItem Header="Exit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Exercise">
+                <MenuItem Header="Load Exercise..." Click="LoadExercise_Click"/>
+                <MenuItem Header="Clear Exercise" Click="ClearExercise_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="About_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel - Program Editor with Tabs -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Program Editor Header -->
+                <Border Grid.Row="0" Background="#f0f0f0" Padding="10" Margin="0,0,0,5">
+                    <TextBlock Text="Program Editor" FontSize="16" FontWeight="Bold"/>
+                </Border>
+
+                <!-- Tabbed Editor -->
+                <TabControl Grid.Row="1" x:Name="EditorTabControl" SelectionChanged="EditorTabControl_SelectionChanged">
+                    <!-- Text Editor Tab -->
+                    <TabItem Header="Text">
+                        <Border BorderBrush="#cccccc" BorderThickness="1">
+                            <TextBox x:Name="ProgramTextBox"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     FontFamily="Consolas"
+                                     FontSize="13"
+                                     Padding="5"
+                                     TextChanged="ProgramTextBox_TextChanged"/>
+                        </Border>
+                    </TabItem>
+
+                    <!-- Block Editor Tab -->
+                    <TabItem Header="Blocks">
+                        <controls:BlockEditor x:Name="BlockEditorControl" 
+                                              ProgramChanged="BlockEditor_ProgramChanged"/>
+                    </TabItem>
+                </TabControl>
+
+                <!-- Control Buttons -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" 
+                           HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Button x:Name="RunButton" Content="▶ Run" 
+                           Style="{StaticResource PrimaryButton}"
+                           Click="RunButton_Click" Margin="5"/>
+                    <Button x:Name="MetricsButton" Content="📊 Metrics" 
+                           Style="{StaticResource SecondaryButton}"
+                           Click="MetricsButton_Click" Margin="5"/>
+                    <Button x:Name="ClearButton" Content="🗑 Clear" 
+                           Click="ClearButton_Click" Margin="5"
+                           Background="#f44336" Foreground="White"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" 
+                         Background="#cccccc"/>
+
+            <!-- Right Panel - Visualization and Output -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Grid Visualization -->
+                <Border Grid.Row="0" BorderBrush="#cccccc" BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#f0f0f0" Padding="10">
+                            <StackPanel>
+                                <TextBlock x:Name="GridHeaderText" Text="Grid Visualization" 
+                                          FontSize="16" FontWeight="Bold"/>
+                                <TextBlock x:Name="ExerciseNameText" Text="" 
+                                          FontSize="12" Foreground="#666" Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Canvas x:Name="GridCanvas" Grid.Row="1" 
+                               Background="White" Margin="10"
+                               SizeChanged="GridCanvas_SizeChanged"/>
+                    </Grid>
+                </Border>
+
+                <!-- Splitter -->
+                <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" 
+                             Background="#cccccc"/>
+
+                <!-- Output Panel -->
+                <Border Grid.Row="2" BorderBrush="#cccccc" BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#f0f0f0" Padding="10">
+                            <TextBlock Text="Output" FontSize="16" FontWeight="Bold"/>
+                        </Border>
+
+                        <TextBox x:Name="OutputTextBox" Grid.Row="1"
+                                IsReadOnly="True"
+                                VerticalScrollBarVisibility="Auto"
+                                FontFamily="Consolas"
+                                FontSize="12"
+                                Padding="10"
+                                Background="#fafafa"
+                                TextWrapping="Wrap"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock x:Name="StatusText" Text="Ready"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="ExerciseStatusText" Text="No exercise loaded"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>
