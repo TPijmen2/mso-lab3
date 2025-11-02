@@ -1,0 +1,13 @@
+Move 1
+Turn right
+RepeatUntil WallAhead
+    Move 1
+Turn left
+RepeatUntil WallAhead
+    Move 1
+Turn left
+RepeatUntil WallAhead
+    Move 1
+Turn right
+RepeatUntil WallAhead
+    Move 1
