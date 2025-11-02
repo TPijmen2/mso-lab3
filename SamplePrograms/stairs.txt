@@ -1,5 +1,0 @@
-Repeat 5 times
-    Move 3
-    Turn left
-    Move 2
-    Turn right
