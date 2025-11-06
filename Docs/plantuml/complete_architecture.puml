@@ -1,0 +1,166 @@
+@startuml
+!theme plain
+left to right direction
+skinparam packageStyle rectangle
+
+title Complete System Architecture with Block Editor and Logging
+
+package "Presentation Layer (WPF)" {
+    [MainWindow] as MW
+    [BlockEditor] as BE
+    [CommandBlockControl] as CBC
+    [TextEditor] as TE
+    [GridCanvas] as GC
+}
+
+package "Services Layer" {
+    [ProgramRunner] as PR
+    [ProgramImporter] as PI
+    [GridFileParser] as GFP
+    [ProgramFactory] as PF
+    [BlockCommandConverter] as BCC
+    [LoggingService] as LS
+}
+
+package "Exporters (Strategy Pattern)" {
+    [IProgramExporter] as IPE
+    [TextProgramExporter] as TPE
+    [JsonProgramExporter] as JPE
+    [HtmlProgramExporter] as HPE
+}
+
+package "Logging (Observer Pattern)" {
+    [ILogger] as IL
+    [FileLogger] as FL
+}
+
+package "Domain Model" {
+    [Program] as PROG
+    [ICommand] as IC
+    [MoveCommand] as MC
+    [TurnCommand] as TC
+    [RepeatCommand] as RC
+    [RepeatUntilCommand] as RUC
+    [Character] as CHAR
+    [Grid] as GRID
+    [Cell] as CELL
+    [PathfindingExercise] as PE
+    [BlockRepresentation] as BR
+}
+
+package "Exceptions" {
+    [OutOfBoundsException] as OBE
+    [BlockedCellException] as BCE
+}
+
+' UI Layer relationships
+MW --> BE : contains
+MW --> TE : contains
+MW --> GC : contains
+BE --> CBC : contains many
+MW --> PR : uses
+MW --> PI : uses
+MW --> GFP : uses
+MW --> PF : uses
+MW --> BCC : uses
+MW --> LS : logs to
+MW --> IPE : uses
+
+BE --> BCC : uses
+BE --> LS : logs to
+BE --> PROG : creates/loads
+
+' Service layer relationships
+PR --> PROG : executes
+PR --> CHAR : manages
+PR --> PE : validates against
+PR --> LS : logs to
+PI --> PROG : creates
+PI --> LS : logs to
+GFP --> PE : creates
+GFP --> LS : logs to
+PF --> PROG : creates
+BCC --> BR : converts to/from
+BCC --> IC : converts to/from
+BCC --> PROG : converts to/from
+
+' Exporter relationships
+IPE <|.. TPE
+IPE <|.. JPE
+IPE <|.. HPE
+TPE --> PROG : exports
+JPE --> PROG : exports
+HPE --> PROG : exports
+
+' Logging relationships
+LS --> IL : uses
+IL <|.. FL
+
+' Domain model relationships
+PROG --> IC : contains many
+IC <|.. MC
+IC <|.. TC
+IC <|.. RC
+IC <|.. RUC
+RC --> IC : contains many
+RUC --> IC : contains many
+IC --> CHAR : executes on
+CHAR --> GRID : validates against
+GRID --> CELL : contains many
+PE --> GRID : contains
+PE --> CHAR : has start position
+
+MC ..> OBE : may throw
+MC ..> BCE : may throw
+
+BR --> BR : nests (container blocks)
+
+note right of MW
+  Main application window
+  with tabbed editor:
+  - Text tab
+  - Blocks tab
+  Coordinates all UI components
+end note
+
+note right of BE
+  Visual block-based programming.
+  Drag-and-drop interface.
+  Bidirectional sync with text.
+end note
+
+note right of BCC
+  **Bidirectional Converter**
+  Ensures round-trip fidelity:
+  Blocks ? Commands
+  
+  Tested with 102 unit tests.
+end note
+
+note right of LS
+  **Singleton + Observer Pattern**
+  Centralized logging for
+  entire application.
+  
+  Logs to multiple destinations
+  via ILogger interface.
+end note
+
+note bottom of IC
+  **Composite Pattern**
+  Uniform interface for
+  simple and complex commands.
+  
+  Enables recursive execution
+  and metrics calculation.
+end note
+
+note bottom of IPE
+  **Strategy Pattern**
+  Multiple export formats.
+  Easy to add new formats.
+  
+  Currently: Text, JSON, HTML
+end note
+
+@enduml

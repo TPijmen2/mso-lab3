@@ -1,0 +1,121 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam defaultFontSize 10
+
+title Block Editor Component Class Diagram
+
+package "UI.Controls" {
+    class BlockEditor {
+        - commandBlocks: List<CommandBlockControl>
+        - dragStartPoint: Point
+        - isDragging: bool
+        + <<event>> ProgramChanged
+        --
+        + GetProgram(): Program
+        + LoadProgram(program: Program): void
+        - ConvertBlockToCommand(block: CommandBlockControl): ICommand
+        - ConvertCommandToBlock(command: ICommand): CommandBlockControl
+        - AddBlockToWorkArea(block: CommandBlockControl): void
+        - StartDrag(source: UIElement, blockType: string): void
+        - WorkArea_Drop(sender: object, e: DragEventArgs): void
+    }
+
+    class CommandBlockControl {
+        + CommandType: string
+        + Parameter: int?
+        + BlockColor: string
+        + IsContainer: bool
+        - childBlocks: List<CommandBlockControl>
+        + <<event>> DeleteRequested
+        + <<event>> ParameterChanged
+        --
+        + AddChildBlock(block: CommandBlockControl): void
+        + GetChildBlocks(): List<CommandBlockControl>
+        - InitializeBlock(): void
+        - ParameterInput_TextChanged(sender: object, e: EventArgs): void
+        - Delete_Click(sender: object, e: EventArgs): void
+    }
+}
+
+package "Services" {
+    class BlockCommandConverter {
+        + ConvertCommandToBlock(command: ICommand): BlockRepresentation
+        + ConvertBlockToCommand(block: BlockRepresentation): ICommand
+        + ConvertProgramToBlocks(program: Program): List<BlockRepresentation>
+        + ConvertBlocksToProgram(blocks: List<BlockRepresentation>): Program
+    }
+
+    class BlockRepresentation {
+        + CommandType: string
+        + Parameter: int?
+        + BlockColor: string
+        + IsContainer: bool
+        + Children: List<BlockRepresentation>
+        --
+        + AddChild(child: BlockRepresentation): void
+    }
+}
+
+package "Models" {
+    interface ICommand {
+        + Execute(character: Character): void
+        + CalculateMetrics(level: int): CommandMetrics
+    }
+
+    class Program {
+        + Name: string
+        + Commands: List<ICommand>
+        --
+        + CalculateMetrics(): ProgramMetrics
+        + GetTextRepresentation(): string
+    }
+
+    class MoveCommand
+    class TurnCommand
+    class RepeatCommand
+    class RepeatUntilCommand
+}
+
+' Relationships
+BlockEditor "1" *-- "many" CommandBlockControl : contains >
+BlockEditor ..> BlockCommandConverter : uses >
+BlockEditor ..> Program : creates/loads >
+BlockEditor ..> ICommand : converts to/from >
+
+CommandBlockControl "1" *-- "many" CommandBlockControl : nests >
+
+BlockCommandConverter ..> BlockRepresentation : creates >
+BlockCommandConverter ..> ICommand : converts to/from >
+BlockCommandConverter ..> Program : converts to/from >
+
+BlockRepresentation "1" *-- "many" BlockRepresentation : nests >
+
+Program "1" *-- "many" ICommand : contains >
+
+ICommand <|.. MoveCommand
+ICommand <|.. TurnCommand
+ICommand <|.. RepeatCommand
+ICommand <|.. RepeatUntilCommand
+
+note right of BlockEditor
+  WPF UserControl that provides
+  drag-and-drop visual programming.
+  Converts between visual blocks
+  and Program objects.
+end note
+
+note right of BlockCommandConverter
+  Bidirectional converter ensuring
+  lossless round-trip between
+  text and visual representations.
+end note
+
+note bottom of BlockRepresentation
+  UI-agnostic data transfer object
+  for block representation.
+  Enables testing without WPF.
+end note
+
+@enduml

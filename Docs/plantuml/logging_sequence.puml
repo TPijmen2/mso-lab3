@@ -1,0 +1,160 @@
+@startuml
+!theme plain
+skinparam sequenceMessageAlign center
+autonumber
+
+title Logging Throughout Application Lifecycle
+
+actor User
+participant "App" as APP
+participant "MainWindow" as MW
+participant "BlockEditor" as BE
+participant "ProgramRunner" as PR
+participant "LoggingService" as LS
+participant "FileLogger" as FL
+database "Log File" as LOG
+
+== Application Startup ==
+User -> APP: Launch application
+activate APP
+APP -> LS: Instance.LogInfo("=== Application Starting ===")
+activate LS
+LS -> FL: LogInfo(message)
+activate FL
+FL -> FL: FormatLogEntry(message, Info)
+FL -> LOG: Write "[2024-01-15 14:23:45.123] [INFO] === Application Starting ==="
+deactivate FL
+deactivate LS
+
+APP -> MW: Initialize MainWindow
+activate MW
+MW -> LS: LogInfo("MainWindow initialized")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+deactivate MW
+deactivate APP
+
+== User Loads Exercise ==
+User -> MW: Click "Exercise ? Load Exercise"
+activate MW
+MW -> LS: LogInfo("User clicked Load Exercise")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+
+MW -> MW: Show file dialog
+MW -> LS: LogInfo("File dialog opened")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+
+User -> MW: Select exercise file
+MW -> MW: GridFileParser.ParseFromFile(path)
+MW -> LS: LogInfo("Loaded exercise: Simple Path")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+
+MW -> MW: DrawGrid()
+MW -> LS: LogDebug("Drawing grid: 5x5 cells")
+LS -> FL: LogDebug(message)
+FL -> LOG: Write log entry
+deactivate MW
+
+== User Creates Program in Block Editor ==
+User -> BE: Switch to Blocks tab
+activate BE
+BE -> LS: LogInfo("User switched to Blocks tab")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+
+User -> BE: Drag Move block
+BE -> LS: LogDebug("Added Move block with 5 steps")
+LS -> FL: LogDebug(message)
+FL -> LOG: Write log entry
+
+User -> BE: Drag Repeat block
+BE -> LS: LogDebug("Added Repeat block with 3 times")
+LS -> FL: LogDebug(message)
+FL -> LOG: Write log entry
+deactivate BE
+
+== User Runs Program ==
+User -> MW: Click Run button
+activate MW
+MW -> LS: LogInfo("User clicked Run button")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+
+MW -> BE: GetProgram()
+activate BE
+BE -> LS: LogDebug("Converting blocks to program: 2 blocks")
+LS -> FL: LogDebug(message)
+FL -> LOG: Write log entry
+BE --> MW: program
+deactivate BE
+
+MW -> PR: Execute()
+activate PR
+PR -> LS: LogInfo("Starting program execution: Block Program")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+
+loop For each command
+    PR -> LS: LogDebug("Executing: MoveCommand(5)")
+    LS -> FL: LogDebug(message)
+    FL -> LOG: Write log entry
+end
+
+alt Success
+    PR -> LS: LogInfo("Program completed successfully")
+    LS -> FL: LogInfo(message)
+    FL -> LOG: Write log entry
+else Runtime Error
+    PR -> LS: LogError("Runtime error: OutOfBoundsException at (6,3)")
+    LS -> FL: LogError(message)
+    FL -> LOG: Write log entry
+    
+    PR -> LS: LogException(ex, "Program execution failed")
+    activate LS
+    LS -> LS: Format exception with stack trace
+    LS -> FL: LogError(full exception message)
+    FL -> LOG: Write log entry with stack trace
+    deactivate LS
+end
+
+PR --> MW: ProgramExecutionResult
+deactivate PR
+
+MW -> LS: LogInfo("Program execution completed with status: Success")
+LS -> FL: LogInfo(message)
+FL -> LOG: Write log entry
+deactivate MW
+
+== Log Rotation (Automatic) ==
+FL -> FL: Check file size
+alt File size > 10MB
+    FL -> LOG: Rename to app_20240115_142345.log
+    FL -> LOG: Create new app_20240115.log
+    FL -> LS: Continue logging to new file
+end
+
+== Application Shutdown ==
+User -> APP: Close application
+activate APP
+APP -> LS: LogInfo("=== Application Shutting Down ===")
+activate LS
+LS -> FL: LogInfo(message)
+FL -> LOG: Write "[2024-01-15 15:30:00.456] [INFO] === Application Shutting Down ==="
+deactivate FL
+deactivate LS
+deactivate APP
+
+note over LS, LOG
+  **Log Levels Used:**
+  - DEBUG: Detailed operations (block operations, command execution)
+  - INFO: User actions, lifecycle events
+  - WARNING: Recoverable issues
+  - ERROR: Exceptions, failures
+  
+  **Thread Safety:** All writes protected by lock
+end note
+
+@enduml

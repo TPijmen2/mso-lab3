@@ -1,0 +1,231 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam defaultFontSize 10
+
+title Domain Model - Core Business Logic Classes
+
+package "Models" {
+    class Character {
+        + Position: Position
+        + Direction: Direction
+        + Path: List<Position>
+        + Grid: Grid?
+        --
+        + Move(steps: int): void
+        + Turn(direction: TurnDirection): void
+        + SetGrid(grid: Grid): void
+        + GetCurrentPosition(): Position
+        + GetDirection(): Direction
+    }
+
+    class Position {
+        + X: int
+        + Y: int
+        --
+        + Position(x: int, y: int)
+        + Equals(other: Position): bool
+        + ToString(): string
+    }
+
+    enum Direction {
+        North
+        East
+        South
+        West
+    }
+
+    enum TurnDirection {
+        Left
+        Right
+    }
+
+    class Grid {
+        + Width: int
+        + Height: int
+        + EndPosition: Position
+        - cells: Cell[,]
+        --
+        + Grid(width: int, height: int)
+        + GetCell(x: int, y: int): Cell
+        + IsWithinBounds(position: Position): bool
+        + IsCellBlocked(position: Position): bool
+        + GetNextPosition(position: Position, direction: Direction): Position
+        + SetCellBlocked(x: int, y: int, blocked: bool): void
+    }
+
+    class Cell {
+        + IsBlocked: bool
+        + IsEndPosition: bool
+        + IsVisited: bool
+        --
+        + Cell()
+        + MarkVisited(): void
+    }
+
+    class PathfindingExercise {
+        + Name: string
+        + Grid: Grid
+        + StartPosition: Position
+        --
+        + PathfindingExercise(name: string, grid: Grid, startPos: Position)
+        + IsCompleted(position: Position): bool
+    }
+
+    enum Condition {
+        WallAhead
+        GridEdge
+    }
+}
+
+package "Commands" {
+    interface ICommand {
+        + Execute(character: Character): void
+        + CalculateMetrics(level: int): CommandMetrics
+        + GetTextRepresentation(indent: int): string
+    }
+
+    class MoveCommand {
+        + Steps: int
+        --
+        + MoveCommand(steps: int)
+        + Execute(character: Character): void
+        + CalculateMetrics(level: int): CommandMetrics
+        + GetTextRepresentation(indent: int): string
+    }
+
+    class TurnCommand {
+        + TurnDirection: TurnDirection
+        --
+        + TurnCommand(direction: TurnDirection)
+        + Execute(character: Character): void
+        + CalculateMetrics(level: int): CommandMetrics
+        + GetTextRepresentation(indent: int): string
+    }
+
+    class RepeatCommand {
+        + Times: int
+        + Commands: List<ICommand>
+        --
+        + RepeatCommand(times: int, commands: List<ICommand>)
+        + Execute(character: Character): void
+        + CalculateMetrics(level: int): CommandMetrics
+        + GetTextRepresentation(indent: int): string
+    }
+
+    class RepeatUntilCommand {
+        + Condition: Condition
+        + Commands: List<ICommand>
+        - MaxIterations: int = 10000
+        --
+        + RepeatUntilCommand(condition: Condition, commands: List<ICommand>)
+        + Execute(character: Character): void
+        - EvaluateCondition(character: Character): bool
+        + CalculateMetrics(level: int): CommandMetrics
+        + GetTextRepresentation(indent: int): string
+    }
+}
+
+package "Core" {
+    class Program {
+        + Name: string
+        + Commands: List<ICommand>
+        --
+        + Program(name: string, commands: List<ICommand>)
+        + CalculateMetrics(): ProgramMetrics
+        + GetTextRepresentation(): string
+    }
+
+    class ProgramMetrics {
+        + CommandCount: int
+        + MaxNestingLevel: int
+        + RepeatCount: int
+        --
+        + ProgramMetrics(commandCount: int, maxNesting: int, repeatCount: int)
+    }
+
+    class CommandMetrics {
+        + CommandCount: int
+        + MaxNestingLevel: int
+        + RepeatCount: int
+        --
+        + CommandMetrics(commandCount: int, maxNesting: int, repeatCount: int)
+    }
+}
+
+package "Exceptions" {
+    class OutOfBoundsException {
+        + AttemptedPosition: Position
+        --
+        + OutOfBoundsException(position: Position, message: string)
+    }
+
+    class BlockedCellException {
+        + BlockedPosition: Position
+        --
+        + BlockedCellException(position: Position, message: string)
+    }
+}
+
+' Relationships
+Character --> Position : has
+Character --> Direction : faces
+Character --> Grid : validates against
+Character --> Position : tracks path
+
+Grid "1" *-- "many" Cell : contains
+Grid --> Position : has end
+
+PathfindingExercise --> Grid : contains
+PathfindingExercise --> Position : has start
+
+ICommand <|.. MoveCommand
+ICommand <|.. TurnCommand
+ICommand <|.. RepeatCommand
+ICommand <|.. RepeatUntilCommand
+
+RepeatCommand "1" *-- "many" ICommand : contains
+RepeatUntilCommand "1" *-- "many" ICommand : contains
+RepeatUntilCommand --> Condition : evaluates
+
+MoveCommand ..> Character : executes on
+TurnCommand ..> Character : executes on
+TurnCommand --> TurnDirection : uses
+RepeatCommand ..> Character : executes on
+RepeatUntilCommand ..> Character : executes on
+
+MoveCommand ..> OutOfBoundsException : may throw
+MoveCommand ..> BlockedCellException : may throw
+
+Program "1" *-- "many" ICommand : contains
+Program ..> ProgramMetrics : calculates
+ICommand ..> CommandMetrics : calculates
+
+note right of Character
+  Represents the cat character
+  that executes commands.
+  Can operate with or without
+  a Grid for validation.
+end note
+
+note right of Grid
+  2D grid of cells with
+  blocked/walkable states.
+  Coordinate system:
+  (0,0) = bottom-left
+end note
+
+note right of ICommand
+  Composite pattern allows
+  uniform treatment of
+  simple and complex commands.
+end note
+
+note bottom of RepeatUntilCommand
+  Conditional loop with
+  safety limit (10,000 iterations)
+  to prevent infinite loops.
+end note
+
+@enduml

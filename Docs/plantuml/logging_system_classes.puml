@@ -1,0 +1,147 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam defaultFontSize 10
+
+title Logging System Class Diagram (Observer Pattern)
+
+package "Services.Logger" {
+    interface ILogger <<Observer>> {
+        + Log(message: string, level: LogLevel): void
+        + LogInfo(message: string): void
+        + LogWarning(message: string): void
+        + LogError(message: string): void
+        + LogDebug(message: string): void
+    }
+
+    enum LogLevel {
+        Debug
+        Info
+        Warning
+        Error
+    }
+
+    class FileLogger {
+        - _logFilePath: string
+        - _maxFileSizeBytes: long
+        - _lockObject: object
+        --
+        + Log(message: string, level: LogLevel): void
+        + LogInfo(message: string): void
+        + LogWarning(message: string): void
+        + LogError(message: string): void
+        + LogDebug(message: string): void
+        - FormatLogEntry(message: string, level: LogLevel): string
+        - RotateLogIfNeeded(): void
+        + GetLogFilePath(): string
+    }
+
+    class LoggingService <<Singleton>> <<Subject>> {
+        - {static} _instance: LoggingService
+        - {static} _lock: object
+        - _logger: ILogger
+        --
+        + {static} Instance: LoggingService <<get>>
+        + Log(message: string, level: LogLevel): void
+        + LogInfo(message: string): void
+        + LogWarning(message: string): void
+        + LogError(message: string): void
+        + LogDebug(message: string): void
+        + LogException(ex: Exception, context: string): void
+        + GetLogger(): ILogger
+    }
+}
+
+package "Services" {
+    class ProgramRunner {
+        + Execute(): ProgramExecutionResult
+        - ExecuteCommands(...): void
+    }
+
+    class GridFileParser {
+        + ParseFromFile(path: string): PathfindingExercise
+    }
+
+    class ProgramImporter {
+        + ImportFromFile(path: string): Program
+    }
+}
+
+package "UI" {
+    class MainWindow {
+        - RunButton_Click(sender: object, e: EventArgs): void
+        - LoadExercise_Click(sender: object, e: EventArgs): void
+        - LoadProgram_Click(sender: object, e: EventArgs): void
+    }
+
+    class BlockEditor {
+        + GetProgram(): Program
+        + LoadProgram(program: Program): void
+    }
+}
+
+package "Core" {
+    class App {
+        - Application_Startup(sender: object, e: EventArgs): void
+        - Application_Exit(sender: object, e: EventArgs): void
+        - OnUnhandledException(sender: object, e: EventArgs): void
+    }
+}
+
+' Relationships
+ILogger <|.. FileLogger : implements
+ILogger <.. LoggingService : uses
+LogLevel <.. ILogger : uses
+LogLevel <.. FileLogger : uses
+
+MainWindow ..> LoggingService : logs to >
+BlockEditor ..> LoggingService : logs to >
+ProgramRunner ..> LoggingService : logs to >
+GridFileParser ..> LoggingService : logs to >
+ProgramImporter ..> LoggingService : logs to >
+App ..> LoggingService : logs to >
+
+note right of LoggingService
+  Singleton providing centralized
+  logging. Thread-safe with
+  double-checked locking.
+end note
+
+note right of FileLogger
+  Writes to rotating log files:
+  %AppData%/ProgrammingLearningApp/Logs/
+  
+  Format:
+  [timestamp] [LEVEL] message
+  
+  Rotates at 10MB by default.
+end note
+
+note bottom of ILogger
+  Observer interface allows
+  multiple logging destinations:
+  - File (FileLogger)
+  - Console (future)
+  - Database (future)
+  - Network (future)
+end note
+
+note left of MainWindow
+  All UI actions are logged:
+  - Menu clicks
+  - Button presses
+  - Tab switches
+  - File operations
+  - Errors
+end note
+
+note left of ProgramRunner
+  Logs execution details:
+  - Start/end
+  - Each command
+  - Success/failure
+  - Exceptions
+end note
+
+@enduml
