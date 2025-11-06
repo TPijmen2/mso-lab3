@@ -1,0 +1,128 @@
+@startuml
+!theme plain
+skinparam sequenceMessageAlign center
+autonumber
+
+title Block-to-Text-to-Block Round-Trip Conversion
+
+actor User
+participant "BlockEditor" as BE
+participant "BlockCommandConverter" as BCC
+participant "BlockRepresentation" as BR
+participant "Program" as P
+participant "ICommand" as CMD
+
+== User Creates Visual Program ==
+User -> BE: Drag Move block to work area
+activate BE
+BE -> BE: AddBlockToWorkArea(block)
+BE -> BE: Raise ProgramChanged event
+deactivate BE
+
+User -> BE: Drag Repeat block
+User -> BE: Drag Move inside Repeat
+BE -> BE: Update visual display
+
+== User Clicks "Run" - Convert Blocks to Program ==
+User -> BE: Click Run button
+activate BE
+BE -> BE: GetProgram()
+BE -> BCC: ConvertBlocksToProgram(blocks)
+activate BCC
+
+loop For each block
+    BCC -> BR: Read block properties
+    activate BR
+    BR --> BCC: CommandType, Parameter, Children
+    deactivate BR
+    
+    BCC -> BCC: ConvertBlockToCommand(block)
+    
+    alt Simple command (Move, Turn)
+        BCC -> CMD: new MoveCommand(steps)
+        activate CMD
+        CMD --> BCC: command
+        deactivate CMD
+    else Container command (Repeat)
+        BCC -> BCC: Recursive call for children
+        BCC -> CMD: new RepeatCommand(times, childCommands)
+        activate CMD
+        CMD --> BCC: command
+        deactivate CMD
+    end
+end
+
+BCC -> P: new Program(name, commands)
+activate P
+P --> BCC: program
+deactivate P
+BCC --> BE: program
+deactivate BCC
+
+BE -> BE: Execute program
+deactivate BE
+
+== User Switches to Text Tab ==
+User -> BE: Switch to Text tab
+activate BE
+BE -> P: GetTextRepresentation()
+activate P
+P --> BE: "Move 5\nRepeat 3 times\n    Move 1"
+deactivate P
+BE -> BE: Display in TextBox
+deactivate BE
+
+== User Edits Text ==
+User -> BE: Edit text (add Turn Right)
+BE -> BE: Parse text (via ProgramImporter)
+
+== User Switches Back to Blocks Tab ==
+User -> BE: Switch to Blocks tab
+activate BE
+BE -> BE: LoadProgram(program)
+BE -> BCC: ConvertProgramToBlocks(program)
+activate BCC
+
+loop For each command in program
+    BCC -> CMD: Get command properties
+    activate CMD
+    CMD --> BCC: Type, parameters
+    deactivate CMD
+    
+    BCC -> BR: new BlockRepresentation(...)
+    activate BR
+    
+    alt Container command
+        BCC -> BCC: Recursive call for nested commands
+        BR -> BR: AddChild(childBlock)
+    end
+    
+    BR --> BCC: blockRepresentation
+    deactivate BR
+end
+
+BCC --> BE: List<BlockRepresentation>
+deactivate BCC
+
+loop For each BlockRepresentation
+    BE -> BE: Create CommandBlockControl
+    BE -> BE: AddBlockToWorkArea(block)
+end
+
+BE -> BE: Update visual display
+deactivate BE
+
+note over BE, CMD
+  **Round-Trip Guarantee:**
+  Original blocks ? Program ? Text ? Program ? Blocks
+  
+  All properties preserved:
+  - Command types
+  - Parameters
+  - Nesting structure
+  - Order
+  
+  Verified by 102 unit tests.
+end note
+
+@enduml

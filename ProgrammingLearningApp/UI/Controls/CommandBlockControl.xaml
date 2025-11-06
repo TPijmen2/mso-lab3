@@ -1,0 +1,86 @@
+<UserControl x:Class="ProgrammingLearningApp.UI.Controls.CommandBlockControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d">
+    <Border x:Name="BlockBorder" 
+            CornerRadius="5" 
+            Padding="15,10" 
+            Margin="0,5"
+            BorderBrush="#333333"
+            BorderThickness="2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Main Block Content -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Command Label and Parameter -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="CommandLabel" 
+                               Text="Command" 
+                               FontWeight="Bold" 
+                               FontSize="14"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                    
+                    <TextBox x:Name="ParameterInput" 
+                             Width="50" 
+                             Margin="10,0,0,0"
+                             TextAlignment="Center"
+                             VerticalAlignment="Center"
+                             Visibility="Collapsed"
+                             TextChanged="ParameterInput_TextChanged"/>
+                </StackPanel>
+
+                <!-- Delete Button -->
+                <Button Grid.Column="2" 
+                        Content="X" 
+                        Width="25" 
+                        Height="25"
+                        Background="#f44336"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="Delete_Click"
+                        VerticalAlignment="Center"
+                        Margin="10,0,0,0"/>
+            </Grid>
+
+            <!-- Container for child blocks (for Repeat blocks) -->
+            <Border Grid.Row="1" 
+                    x:Name="ChildContainer"
+                    Visibility="Collapsed"
+                    Margin="20,10,0,0"
+                    MinHeight="60"
+                    Padding="10"
+                    Background="#33FFFFFF"
+                    CornerRadius="5"
+                    BorderBrush="#666666"
+                    BorderThickness="1"
+                    AllowDrop="True"
+                    Drop="ChildContainer_Drop"
+                    DragOver="ChildContainer_DragOver">
+                <StackPanel x:Name="ChildPanel" Background="Transparent">
+                    <TextBlock x:Name="EmptyChildMessage"
+                               Text="Drop blocks here"
+                               FontStyle="Italic"
+                               Foreground="White"
+                               Opacity="0.7"
+                               HorizontalAlignment="Center"
+                               Margin="0,10"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

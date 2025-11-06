@@ -1,0 +1,196 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam defaultFontSize 10
+
+title Services Layer - Business Logic and I/O
+
+package "Services" {
+    class ProgramRunner {
+        - program: Program
+        - exercise: PathfindingExercise?
+        --
+        + ProgramRunner(program: Program, exercise: PathfindingExercise?)
+        + Execute(): ProgramExecutionResult
+        - ExecuteCommands(commands: List<ICommand>, character: Character, trace: List<string>): void
+        - EvaluateCondition(condition: Condition, character: Character): bool
+    }
+
+    class ProgramExecutionResult {
+        + Status: ExecutionStatus
+        + FinalPosition: Position
+        + FinalDirection: Direction
+        + Trace: List<string>
+        + ErrorMessage: string?
+        + Exception: Exception?
+        --
+        + ProgramExecutionResult(status: ExecutionStatus, position: Position, direction: Direction, trace: List<string>)
+    }
+
+    enum ExecutionStatus {
+        Success
+        Failure
+        RuntimeError
+    }
+
+    class ProgramImporter {
+        + ImportFromFile(filePath: string): Program
+        - ParseCommands(lines: string[], ref index: int, level: int): List<ICommand>
+        - ParseMoveCommand(line: string, lineNumber: int): MoveCommand
+        - ParseTurnCommand(line: string, lineNumber: int): TurnCommand
+        - ParseRepeatCommand(lines: string[], ref index: int, level: int): RepeatCommand
+        - ParseRepeatUntilCommand(lines: string[], ref index: int, level: int): RepeatUntilCommand
+    }
+
+    class GridFileParser {
+        + ParseFromFile(filePath: string): PathfindingExercise
+        - ParseGridLine(line: string, y: int, width: int): Cell[]
+        - TransformCoordinates(x: int, y: int, height: int): Position
+    }
+
+    class ProgramFactory {
+        + CreateBasicProgram(): Program
+        + CreateAdvancedProgram(): Program
+        + CreateExpertProgram(): Program
+    }
+}
+
+package "Exporters" <<Strategy Pattern>> {
+    interface IProgramExporter {
+        + Export(program: Program, filePath: string): void
+    }
+
+    class TextProgramExporter {
+        + Export(program: Program, filePath: string): void
+    }
+
+    class JsonProgramExporter {
+        + Export(program: Program, filePath: string): void
+        - SerializeCommand(command: ICommand): JsonObject
+    }
+
+    class HtmlProgramExporter {
+        + Export(program: Program, filePath: string): void
+        - GenerateHtml(program: Program): string
+        - GetCommandHtml(command: ICommand, indent: int): string
+    }
+}
+
+package "Logging" <<Observer Pattern>> {
+    class LoggingService <<Singleton>> {
+        - {static} _instance: LoggingService
+        - {static} _lock: object
+        - _logger: ILogger
+        --
+        + {static} Instance: LoggingService
+        + Log(message: string, level: LogLevel): void
+        + LogInfo(message: string): void
+        + LogWarning(message: string): void
+        + LogError(message: string): void
+        + LogDebug(message: string): void
+        + LogException(ex: Exception, context: string): void
+    }
+
+    interface ILogger {
+        + Log(message: string, level: LogLevel): void
+        + LogInfo(message: string): void
+        + LogWarning(message: string): void
+        + LogError(message: string): void
+        + LogDebug(message: string): void
+    }
+
+    enum LogLevel {
+        Debug
+        Info
+        Warning
+        Error
+    }
+
+    class FileLogger {
+        - _logFilePath: string
+        - _maxFileSizeBytes: long
+        - _lockObject: object
+        --
+        + FileLogger(logFilePath: string, maxFileSizeInMB: long)
+        + Log(message: string, level: LogLevel): void
+        - FormatLogEntry(message: string, level: LogLevel): string
+        - RotateLogIfNeeded(): void
+        + GetLogFilePath(): string
+    }
+}
+
+package "Models" {
+    class Program
+    class PathfindingExercise
+    interface ICommand
+}
+
+' Relationships
+ProgramRunner --> Program : executes
+ProgramRunner --> PathfindingExercise : validates with
+ProgramRunner ..> ProgramExecutionResult : returns
+ProgramExecutionResult --> ExecutionStatus : has
+
+ProgramImporter ..> Program : creates
+ProgramImporter ..> ICommand : creates
+
+GridFileParser ..> PathfindingExercise : creates
+
+ProgramFactory ..> Program : creates
+
+IProgramExporter <|.. TextProgramExporter
+IProgramExporter <|.. JsonProgramExporter
+IProgramExporter <|.. HtmlProgramExporter
+
+IProgramExporter ..> Program : exports
+
+LoggingService --> ILogger : uses
+ILogger <|.. FileLogger
+ILogger ..> LogLevel : uses
+
+note right of ProgramRunner
+  Executes programs with or
+  without grid exercises.
+  Handles error conditions
+  and builds execution trace.
+end note
+
+note right of ProgramImporter
+  Parses text-based program
+  files into Program objects.
+  Validates syntax and
+  indentation.
+end note
+
+note right of GridFileParser
+  Parses grid exercise files.
+  Handles coordinate system
+  transformation (file Y=0 at top,
+  system Y=0 at bottom).
+end note
+
+note bottom of IProgramExporter
+  Strategy pattern allows
+  multiple export formats.
+  Easy to add new exporters
+  without modifying existing code.
+end note
+
+note right of LoggingService
+  Singleton providing centralized
+  logging. Thread-safe with
+  double-checked locking.
+  Observer pattern allows
+  multiple log destinations.
+end note
+
+note right of FileLogger
+  Logs to rotating files:
+  %AppData%/ProgrammingLearningApp/Logs/
+  
+  Format: [timestamp] [LEVEL] message
+  Rotates at 10MB by default.
+end note
+
+@enduml

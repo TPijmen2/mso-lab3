@@ -1,0 +1,161 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam defaultFontSize 10
+
+title UI Layer - WPF Interface Components
+
+package "UI" {
+    class MainWindow <<WPF Window>> {
+        - currentExercise: PathfindingExercise?
+        - currentProgram: Program?
+        - textEditor: TextBox
+        - blockEditor: BlockEditor
+        - gridCanvas: Canvas
+        - outputTextBox: TextBox
+        --
+        + MainWindow()
+        - InitializeComponent(): void
+        - RunButton_Click(sender: object, e: EventArgs): void
+        - MetricsButton_Click(sender: object, e: EventArgs): void
+        - ClearButton_Click(sender: object, e: EventArgs): void
+        - LoadProgram_Click(sender: object, e: EventArgs): void
+        - LoadExercise_Click(sender: object, e: EventArgs): void
+        - ExportProgram_Click(sender: object, e: EventArgs): void
+        - LoadBasicExample_Click(sender: object, e: EventArgs): void
+        - LoadAdvancedExample_Click(sender: object, e: EventArgs): void
+        - LoadExpertExample_Click(sender: object, e: EventArgs): void
+        - TextTab_Selected(sender: object, e: EventArgs): void
+        - BlocksTab_Selected(sender: object, e: EventArgs): void
+        - DrawGrid(): void
+        - DrawPath(result: ProgramExecutionResult): void
+        - DrawCharacter(position: Position, direction: Direction): void
+        - DisplayOutput(result: ProgramExecutionResult): void
+    }
+
+    class BlockEditor <<WPF UserControl>> {
+        - commandBlocks: List<CommandBlockControl>
+        - workAreaPanel: StackPanel
+        - dragStartPoint: Point
+        - isDragging: bool
+        + <<event>> ProgramChanged
+        --
+        + BlockEditor()
+        + GetProgram(): Program
+        + LoadProgram(program: Program): void
+        - ConvertBlockToCommand(block: CommandBlockControl): ICommand
+        - ConvertCommandToBlock(command: ICommand): CommandBlockControl
+        - AddBlockToWorkArea(block: CommandBlockControl): void
+        - MoveBlock_MouseDown(sender: object, e: MouseButtonEventArgs): void
+        - PaletteBlock_MouseMove(sender: object, e: MouseEventArgs): void
+        - StartDrag(source: UIElement, blockType: string): void
+        - WorkArea_DragOver(sender: object, e: DragEventArgs): void
+        - WorkArea_Drop(sender: object, e: DragEventArgs): void
+        - ClearAll_Click(sender: object, e: EventArgs): void
+        - Block_DeleteRequested(sender: object, e: EventArgs): void
+        - Block_ParameterChanged(sender: object, e: EventArgs): void
+    }
+
+    class CommandBlockControl <<WPF UserControl>> {
+        + CommandType: string
+        + Parameter: int?
+        + BlockColor: string
+        + IsContainer: bool
+        - childBlocks: List<CommandBlockControl>
+        - blockBorder: Border
+        - commandLabel: TextBlock
+        - parameterInput: TextBox
+        - childContainer: Border
+        - childPanel: StackPanel
+        + <<event>> DeleteRequested
+        + <<event>> ParameterChanged
+        --
+        + CommandBlockControl(commandType: string, parameter: int?, color: string, isContainer: bool)
+        - InitializeComponent(): void
+        - InitializeBlock(): void
+        + AddChildBlock(block: CommandBlockControl): void
+        + GetChildBlocks(): List<CommandBlockControl>
+        - ParameterInput_TextChanged(sender: object, e: EventArgs): void
+        - Delete_Click(sender: object, e: EventArgs): void
+        - ChildContainer_DragOver(sender: object, e: DragEventArgs): void
+        - ChildContainer_Drop(sender: object, e: DragEventArgs): void
+        - ChildBlock_DeleteRequested(sender: object, e: EventArgs): void
+    }
+}
+
+package "Services" {
+    class ProgramRunner
+    class ProgramImporter
+    class GridFileParser
+    class ProgramFactory
+    interface IProgramExporter
+    class LoggingService
+    class BlockCommandConverter
+}
+
+package "Models" {
+    class Program
+    class PathfindingExercise
+    class Character
+    class Grid
+    class Position
+    class Direction
+    interface ICommand
+    class ProgramExecutionResult
+}
+
+' Relationships
+MainWindow --> BlockEditor : contains
+MainWindow --> ProgramRunner : uses
+MainWindow --> ProgramImporter : uses
+MainWindow --> GridFileParser : uses
+MainWindow --> ProgramFactory : uses
+MainWindow --> IProgramExporter : uses
+MainWindow --> LoggingService : logs to
+MainWindow --> Program : manages
+MainWindow --> PathfindingExercise : manages
+MainWindow ..> ProgramExecutionResult : receives
+
+BlockEditor "1" *-- "many" CommandBlockControl : contains
+BlockEditor --> BlockCommandConverter : uses
+BlockEditor --> Program : creates/loads
+BlockEditor --> LoggingService : logs to
+
+CommandBlockControl "1" o-- "many" CommandBlockControl : nests
+CommandBlockControl --> LoggingService : logs to
+
+note right of MainWindow
+  Main application window.
+  Coordinates all UI components:
+  - Tabbed editor (Text/Blocks)
+  - Grid visualization canvas
+  - Output display
+  - Menu system
+  - Control buttons
+  
+  Delegates business logic
+  to service layer.
+end note
+
+note right of BlockEditor
+  Visual block-based programming
+  interface. Provides drag-and-drop
+  functionality for creating programs
+  without syntax errors.
+  
+  Implements bidirectional sync
+  with text representation.
+end note
+
+note bottom of CommandBlockControl
+  Individual command block UI.
+  Features:
+  - Color-coded by command type
+  - Editable parameters
+  - Delete button
+  - Container support for nesting
+  - Drag-and-drop operations
+end note
+
+@enduml
