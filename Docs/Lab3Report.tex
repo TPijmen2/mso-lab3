@@ -11,6 +11,7 @@
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{booktabs}
+\usepackage{longtable}
 \usepackage{subcaption}
 
 % Page layout
@@ -31,19 +32,14 @@
 % Title information
 \title{\textbf{MSO Lab Assignment 3:\\Programming Learning App --- Iteration 2}}
 \author{
-    Tijmen Name (Student ID)\\
-    Ilyas Name (Student ID)\\
-    \textit{Group X}
+    Tijmen Name\\
+    Ilyas Name
 }
 \date{\today}
 
 \begin{document}
 
 \maketitle
-
-\begin{abstract}
-This report presents the second iteration of our programming learning application, CodeCat. Building on the foundation from Lab 2, we have implemented a graphical user interface using WPF with a dual-mode programming environment supporting both text-based and visual block-based programming. We added grid-based pathfinding exercises with blocked cells, introduced a new RepeatUntil conditional command, and implemented bonus features including a drag-and-drop block editor with bidirectional text-block conversion, program export to multiple formats, and a comprehensive event logging system. The report documents our design decisions, code quality improvements, testing strategy, and reflects on the development process.
-\end{abstract}
 
 \tableofcontents
 \newpage
@@ -53,11 +49,11 @@ This report presents the second iteration of our programming learning applicatio
 \subsection{Application Identity}
 \textbf{Name:} CodeCat
 
-\textbf{Tagline:} "Learn programming, one paw at a time"
+\noindent\textbf{Tagline:} "Learn programming, one paw at a time"
 
-\textbf{Main Character:} A friendly cartoon cat that navigates through grids, solving programming puzzles. The cat moves with smooth animations and provides visual feedback for successful and failed attempts.
+\noindent\textbf{Main Character:} A friendly cartoon cat that navigates through grids, solving programming puzzles. The cat moves with smooth animations and provides visual feedback for successful and failed attempts.
 
-\textbf{Color Scheme:}
+\noindent\textbf{Color Scheme:}
 \begin{itemize}
     \item Primary: Green (\texttt{\#4CAF50}) - Success, run button
     \item Secondary: Blue (\texttt{\#2196F3}) - Information, metrics button
@@ -66,7 +62,7 @@ This report presents the second iteration of our programming learning applicatio
     \item Grid: White cells, dark gray for blocked cells, light green for goal
 \end{itemize}
 
-\textbf{Logo:} A stylized cat silhouette with a grid pattern background (see attached logo file).
+\noindent\textbf{Logo:} A stylized cat silhouette with a grid pattern background (see attached logo file).
 
 \subsection{User Experience Philosophy}
 Our design prioritizes clarity and immediate feedback. Users can see their programs execute in real-time on the grid visualization, making the connection between code and behavior explicit. The color coding (green for success, red for errors) provides instant feedback without requiring users to read error messages.
@@ -74,16 +70,16 @@ Our design prioritizes clarity and immediate feedback. Users can see their progr
 \subsection{Dual-Mode Programming Interface}
 \textbf{Innovation:} CodeCat offers both text-based and visual block-based programming in a single, integrated interface. Users can switch between modes seamlessly, with programs automatically synchronized between representations.
 
-\textbf{Tabbed Editor:}
+\noindent\textbf{Tabbed Editor:}
 \begin{itemize}
     \item \textbf{Text Tab:} Traditional code editor with syntax validation for users comfortable with text
     \item \textbf{Blocks Tab:} Drag-and-drop visual programming for beginners and visual learners
     \item Real-time synchronization ensures changes in one mode reflect in the other
 \end{itemize}
 
-\textbf{Educational Philosophy:} This dual approach supports scaffolded learning. Beginners can start with visual blocks (no syntax errors possible), gain confidence, then transition to text-based programming when ready. Advanced users can prototype visually then refine in code.
+\noindent\textbf{Educational Philosophy:} This dual approach supports scaffolded learning. Beginners can start with visual blocks (no syntax errors possible), gain confidence, then transition to text-based programming when ready. Advanced users can prototype visually then refine in code.
 
-\textbf{Block Color Coding:}
+\noindent\textbf{Block Color Coding:}
 \begin{itemize}
     \item Move blocks: Green (\texttt{\#4CAF50}) - Action commands
     \item Turn Left blocks: Blue (\texttt{\#2196F3}) - Navigation
@@ -142,7 +138,7 @@ Due to the increased complexity of our system in Iteration 2, we have organized 
     \label{fig:completearch}
 \end{figure}
 
-\textbf{Diagram Organization:} Our UML documentation is organized into specialized views to manage complexity. Figure~\ref{fig:domain} shows core business logic, Figure~\ref{fig:services} shows the service layer, Figure~\ref{fig:ui} shows the original UI components, Figure~\ref{fig:blockeditor} details the block editor subsystem, Figure~\ref{fig:logging} shows the logging infrastructure, and Figure~\ref{fig:completearch} provides a complete architectural overview showing all design patterns.
+\noindent\textbf{Diagram Organization:} Our UML documentation is organized into specialized views to manage complexity. Figure~\ref{fig:domain} shows core business logic, Figure~\ref{fig:services} shows the service layer, Figure~\ref{fig:ui} shows the original UI components, Figure~\ref{fig:blockeditor} details the block editor subsystem, Figure~\ref{fig:logging} shows the logging infrastructure, and Figure~\ref{fig:completearch} provides a complete architectural overview showing all design patterns.
 
 \subsection{New and Updated Classes}
 
@@ -204,7 +200,7 @@ Due to the increased complexity of our system in Iteration 2, we have organized 
     \item \texttt{SetGrid(Grid): void} --- Attach grid for validation
 \end{itemize}
 
-\textbf{Design Decision:} Grid is optional (nullable) to maintain backward compatibility with Lab 2 programs that run without exercises.
+\noindent\textbf{Design Decision:} Grid is optional (nullable) to maintain backward compatibility with Lab 2 programs that run without exercises.
 
 \subsubsection{RepeatUntilCommand (NEW)}
 \textbf{Responsibilities:} Executes commands repeatedly until a condition becomes true.
@@ -221,7 +217,7 @@ Due to the increased complexity of our system in Iteration 2, we have organized 
     \item \texttt{EvaluateCondition(Character): bool} --- Check if condition is met
 \end{itemize}
 
-\textbf{Safety Feature:} Includes 10,000 iteration limit to prevent infinite loops.
+\noindent\textbf{Safety Feature:} Includes 10,000 iteration limit to prevent infinite loops.
 
 \subsubsection{Custom Exceptions (NEW)}
 
@@ -300,7 +296,7 @@ Thrown when character attempts to move into a blocked cell. Includes the blocked
     \item \texttt{ProgramChanged} --- Raised when blocks are added, removed, or modified
 \end{itemize}
 
-\textbf{Design Decision:} BlockEditor is a self-contained UserControl that can be easily integrated into any WPF window. It communicates with the main application through events, maintaining loose coupling.
+\noindent\textbf{Design Decision:} BlockEditor is a self-contained UserControl that can be easily integrated into any WPF window. It communicates with the main application through events, maintaining loose coupling.
 
 \subsubsection{CommandBlockControl (NEW - Bonus Feature)}
 \textbf{Responsibilities:} Represents a single command block in the visual editor. Supports parameter editing, nested blocks (for container commands), and drag-and-drop functionality.
@@ -327,7 +323,7 @@ Thrown when character attempts to move into a blocked cell. Includes the blocked
     \item \texttt{ParameterChanged} --- User edited parameter value
 \end{itemize}
 
-\textbf{UI Features:}
+\noindent\textbf{UI Features:}
 \begin{itemize}[noitemsep]
     \item Editable parameter fields (click to edit)
     \item Delete button (X) for each block
@@ -395,9 +391,9 @@ Assert.Equal(original.CalculateMetrics(), restored.CalculateMetrics());
     \item \texttt{LogException(Exception, string): void} --- Log exception with context
 \end{itemize}
 
-\textbf{Thread Safety:} Uses double-checked locking for singleton initialization, ensuring thread-safe access.
+\noindent\textbf{Thread Safety:} Uses double-checked locking for singleton initialization, ensuring thread-safe access.
 
-\textbf{Usage Throughout Application:}
+\noindent\textbf{Usage Throughout Application:}
 \begin{lstlisting}
 // In MainWindow
 LoggingService.Instance.LogInfo("User clicked Run button");
@@ -418,9 +414,9 @@ try {
 \subsubsection{Composite Pattern (Enhanced from Lab 2)}
 \textbf{Problem:} Need to treat individual commands and command groups uniformly, now including conditional loops.
 
-\textbf{Solution:} Composite pattern with ICommand as component.
+\noindent\textbf{Solution:} Composite pattern with ICommand as component.
 
-\textbf{Implementation:}
+\noindent\textbf{Implementation:}
 \begin{itemize}[noitemsep]
     \item \textit{Component:} ICommand interface
     \item \textit{Leaves:} MoveCommand, TurnCommand
@@ -428,53 +424,53 @@ try {
     \item \textit{Client:} Program, ProgramRunner
 \end{itemize}
 
-\textbf{Enhancement:} RepeatUntilCommand adds conditional execution while maintaining the same interface as RepeatCommand.
+\noindent\textbf{Enhancement:} RepeatUntilCommand adds conditional execution while maintaining the same interface as RepeatCommand.
 
-\textbf{Alternative Considered:} Visitor pattern for command execution. Rejected because it would require modifying ICommand interface and complicate the structure for limited benefit.
+\noindent\textbf{Alternative Considered:} Visitor pattern for command execution. Rejected because it would require modifying ICommand interface and complicate the structure for limited benefit.
 
 \subsubsection{Factory Pattern (Updated from Lab 2)}
 \textbf{Problem:} Create predefined example programs efficiently.
 
-\textbf{Solution:} Factory pattern encapsulating object creation.
+\noindent\textbf{Solution:} Factory pattern encapsulating object creation.
 
-\textbf{Implementation:}
+\noindent\textbf{Implementation:}
 \begin{itemize}[noitemsep]
     \item \textit{Factory:} ProgramFactory
     \item \textit{Products:} Program objects
     \item \textit{Factory Methods:} CreateBasicProgram(), CreateAdvancedProgram(), CreateExpertProgram()
 \end{itemize}
 
-\textbf{Changes:} Updated to include RepeatUntil commands in advanced and expert examples.
+\noindent\textbf{Changes:} Updated to include RepeatUntil commands in advanced and expert examples.
 
-\textbf{Alternative Considered:} Builder pattern for fluent program construction. Rejected because our programs are simple enough that factory methods are more readable.
+\noindent\textbf{Alternative Considered:} Builder pattern for fluent program construction. Rejected because our programs are simple enough that factory methods are more readable.
 
 \subsubsection{Strategy Pattern (NEW - Bonus Feature)}
-\textbf{Problem:} Support exporting programs to multiple formats (Text, JSON, HTML) with easy extensibility for future formats.
+\noindent\textbf{Problem:} Support exporting programs to multiple formats (Text, JSON, HTML) with easy extensibility for future formats.
 
-\textbf{Solution:} Strategy pattern allows selecting export algorithm at runtime.
+\noindent\textbf{Solution:} Strategy pattern allows selecting export algorithm at runtime.
 
-\textbf{Implementation:}
+\noindent\textbf{Implementation:}
 \begin{itemize}[noitemsep]
     \item \textit{Strategy Interface:} IProgramExporter
     \item \textit{Concrete Strategies:} TextProgramExporter, JsonProgramExporter, HtmlProgramExporter
     \item \textit{Context:} MainWindow (selects exporter based on file extension)
 \end{itemize}
 
-\textbf{Benefits:}
+\noindent\textbf{Benefits:}
 \begin{itemize}[noitemsep]
     \item Easy to add new export formats without modifying existing code
     \item Each exporter is independently testable
     \item Follows Open/Closed Principle
 \end{itemize}
 
-\textbf{Alternative Considered:} Simple if-else chain in MainWindow. Rejected because it would violate Open/Closed Principle and make adding formats harder.
+\noindent\textbf{Alternative Considered:} Simple if-else chain in MainWindow. Rejected because it would violate Open/Closed Principle and make adding formats harder.
 
 \subsubsection{Observer Pattern (NEW - Bonus Feature)}
 \textbf{Problem:} Log application events (exercise loading, program execution, errors) to multiple destinations without tight coupling.
 
-\textbf{Solution:} Observer pattern allows multiple loggers to observe application events.
+\noindent\textbf{Solution:} Observer pattern allows multiple loggers to observe application events.
 
-\textbf{Implementation:}
+\noindent\textbf{Implementation:}
 \begin{itemize}[noitemsep]
     \item \textit{Subject:} LoggingService
     \item \textit{Observer Interface:} ILogger
@@ -482,22 +478,22 @@ try {
     \item \textit{Client:} MainWindow
 \end{itemize}
 
-\textbf{Usage:}
+\noindent\textbf{Usage:}
 \begin{lstlisting}
 // In MainWindow
 LoggingService.Instance.Log("Exercise loaded: " + exerciseName);
 \end{lstlisting}
 
-\textbf{Benefits:}
+\noindent\textbf{Benefits:}
 \begin{itemize}[noitemsep]
     \item Easy to add new logging destinations (console, database, network)
     \item Loggers are decoupled from application logic
     \item Can enable/disable logging without code changes
 \end{itemize}
 
-\textbf{Alternative Considered:} Direct file writing in MainWindow. Rejected because it tightly couples UI to logging implementation and makes testing difficult.
+\noindent\textbf{Alternative Considered:} Direct file writing in MainWindow. Rejected because it tightly couples UI to logging implementation and makes testing difficult.
 
-\textbf{Extended Implementation Details:}
+\noindent\textbf{Extended Implementation Details:}
 
 The logging system logs events throughout the application lifecycle:
 
@@ -544,9 +540,9 @@ The logging system logs events throughout the application lifecycle:
 \subsubsection{Bidirectional Converter Pattern (NEW - Bonus Feature)}
 \textbf{Problem:} Need to convert between two representations of programs (text-based ICommand structure and visual block structure) while preserving complete semantic fidelity in both directions.
 
-\textbf{Solution:} Bidirectional Converter pattern with specialized translation logic for each representation.
+\noindent\textbf{Solution:} Bidirectional Converter pattern with specialized translation logic for each representation.
 
-\textbf{Implementation:}
+\noindent\textbf{Implementation:}
 \begin{itemize}[noitemsep]
     \item \textit{Converter:} BlockCommandConverter service
     \item \textit{Source Representation:} ICommand hierarchy (domain model)
@@ -554,7 +550,7 @@ The logging system logs events throughout the application lifecycle:
     \item \textit{Transfer Object:} BlockRepresentation (UI-agnostic data)
 \end{itemize}
 
-\textbf{Key Design Principles:}
+\noindent\textbf{Key Design Principles:}
 
 \paragraph{Lossless Round-Trip:}
 Programs converted from text to blocks and back to text must be semantically identical:
@@ -599,7 +595,7 @@ private BlockRepresentation ConvertCommandToBlock(ICommand cmd)
 
 This separation enables unit testing without WPF, simplifies the UI code, and makes the converter reusable in non-WPF contexts.
 
-\textbf{Conversion Mapping:}
+\noindent\textbf{Conversion Mapping:}
 
 \begin{table}[H]
 \centering
@@ -618,7 +614,7 @@ RepeatUntilCommand & RepeatUntil Block & Condition, nested commands \\
 \caption{Command-to-Block Conversion Mapping}
 \end{table}
 
-\textbf{Benefits:}
+\noindent\textbf{Benefits:}
 \begin{itemize}[noitemsep]
     \item Users can seamlessly switch between programming modes
     \item Programs created in blocks can be exported as text
@@ -627,33 +623,33 @@ RepeatUntilCommand & RepeatUntil Block & Condition, nested commands \\
     \item Accessibility: visual learners and text-oriented learners both supported
 \end{itemize}
 
-\textbf{Testing Strategy:}
+\noindent\textbf{Testing Strategy:}
 We implemented comprehensive round-trip tests to ensure fidelity. See BlockEditorConverterTests class (102 tests) for complete verification.
 
-\textbf{Alternative Considered:} Direct UI-to-Command conversion without intermediate representation. Rejected because it would tightly couple UI to domain logic, make testing difficult, and violate separation of concerns.
+\noindent\textbf{Alternative Considered:} Direct UI-to-Command conversion without intermediate representation. Rejected because it would tightly couple UI to domain logic, make testing difficult, and violate separation of concerns.
 
 \subsection{Deviations from Lab 2 Design}
 
 \subsubsection{Program Execution Extracted}
 \textbf{Original Design:} Program class handled both structure and execution.
 
-\textbf{New Design:} Created ProgramRunner service to handle execution.
+\noindent\textbf{New Design:} Created ProgramRunner service to handle execution.
 
-\textbf{Reason:} Execution became more complex with grid awareness, error handling, and exercise validation. Extracting it improved cohesion and made testing easier.
+\noindent\textbf{Reason:} Execution became more complex with grid awareness, error handling, and exercise validation. Extracting it improved cohesion and made testing easier.
 
 \subsubsection{Character Grid Awareness}
 \textbf{Original Design:} Character had no concept of boundaries or obstacles.
 
-\textbf{New Design:} Character can have an optional Grid for validation.
+\noindent\textbf{New Design:} Character can have an optional Grid for validation.
 
-\textbf{Reason:} Required for pathfinding exercises. Made optional to maintain backward compatibility with Lab 2 programs.
+\noindent\textbf{Reason:} Required for pathfinding exercises. Made optional to maintain backward compatibility with Lab 2 programs.
 
 \subsubsection{Exception Handling}
 \textbf{Original Design:} Generic exceptions for errors.
 
-\textbf{New Design:} Custom exceptions (OutOfBoundsException, BlockedCellException) with position information.
+\noindent\textbf{New Design:} Custom exceptions (OutOfBoundsException, BlockedCellException) with position information.
 
-\textbf{Reason:} Provides better error messages and makes debugging easier. Allows UI to display specific, helpful feedback to users.
+\noindent\textbf{Reason:} Provides better error messages and makes debugging easier. Allows UI to display specific, helpful feedback to users.
 
 \subsection{Assumptions}
 
@@ -1045,7 +1041,7 @@ Our design minimizes dependencies through careful interface design and dependenc
 
 \textbf{Scenario:} Animate character movement step-by-step with pause/resume/step-through controls.
 
-\textbf{How our design handles it:}
+\noindent\textbf{How our design handles it:}
 \begin{enumerate}
     \item Create AnimatedProgramRunner that extends ProgramRunner
     \item Add event/callback mechanism after each command execution
@@ -1054,7 +1050,7 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Character.Path already tracks all positions - use for animation
 \end{enumerate}
 
-\textbf{Classes affected:}
+\noindent\textbf{Classes affected:}
 \begin{itemize}[noitemsep]
     \item New: AnimatedProgramRunner, ExecutionController
     \item Modified: MainWindow (add animation controls)
@@ -1062,13 +1058,13 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Unchanged: All commands, models (except Character path usage)
 \end{itemize}
 
-\textbf{Difficulty:} Moderate. Our command structure and path tracking provide good foundation. Main challenge is UI synchronization. Estimated: 20-25 hours.
+\noindent\textbf{Difficulty:} Moderate. Our command structure and path tracking provide good foundation. Main challenge is UI synchronization. Estimated: 10-15 hours.
 
 \paragraph{Change 2: Animation System}
 
 \textbf{Scenario:} Animate character movement step-by-step with pause/resume/step-through controls.
 
-\textbf{How our design handles it:}
+\noindent\textbf{How our design handles it:}
 \begin{enumerate}
     \item Create AnimatedProgramRunner that extends ProgramRunner
     \item Add event/callback mechanism after each command execution
@@ -1077,7 +1073,7 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Character.Path already tracks all positions - use for animation
 \end{enumerate}
 
-\textbf{Classes affected:}
+\noindent\textbf{Classes affected:}
 \begin{itemize}[noitemsep]
     \item New: AnimatedProgramRunner, ExecutionController
     \item Modified: MainWindow (add animation controls)
@@ -1085,13 +1081,13 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Unchanged: All commands, models (except Character path usage)
 \end{itemize}
 
-\textbf{Difficulty:} Moderate. Our command structure and path tracking provide good foundation. Main challenge is UI synchronization. Estimated: 20-25 hours.
+\noindent\textbf{Difficulty:} Moderate. Our command structure and path tracking provide good foundation. Main challenge is UI synchronization. Estimated: 10-15 hours.
 
 \paragraph{Change 3: If-Then-Else Conditional Command}
 
 \textbf{Scenario:} Add branching logic: "If WallAhead Then [commands] Else [commands]"
 
-\textbf{How our design handles it:}
+\noindent\textbf{How our design handles it:}
 \begin{enumerate}
     \item Create IfThenElseCommand implementing ICommand
     \item Reuse existing Condition enum (WallAhead, GridEdge)
@@ -1101,7 +1097,7 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Update exporters to handle new command
 \end{enumerate}
 
-\textbf{Classes affected:}
+\noindent\textbf{Classes affected:}
 \begin{itemize}[noitemsep]
     \item New: IfThenElseCommand
     \item Modified: ProgramImporter parsing logic
@@ -1109,15 +1105,15 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Unchanged: ProgramRunner, Character, Grid, UI
 \end{itemize}
 
-\textbf{Difficulty:} Easy. Composite pattern makes this straightforward. Estimated: 8-10 hours including tests.
+\noindent\textbf{Difficulty:} Easy. Composite pattern makes this straightforward. Estimated: 8-10 hours including tests.
 
 \subsubsection{Difficult Changes}
 
 \paragraph{Web-Based Collaborative Editing}
 
-\textbf{Scenario:} Multiple users editing same program simultaneously in browser.
+\noindent\textbf{Scenario:} Multiple users editing same program simultaneously in browser.
 
-\textbf{Challenges:}
+\noindent\textbf{Challenges:}
 \begin{itemize}
     \item Complete UI rewrite (WPF → web framework)
     \item Real-time synchronization of edits
@@ -1127,15 +1123,15 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Network latency handling
 \end{itemize}
 
-\textbf{Why difficult:} Fundamental architecture change. WPF is desktop-only. Would need operational transformation or CRDT algorithms for collaboration. State management becomes distributed. Estimated: 100+ hours.
+\noindent\textbf{Why difficult:} Fundamental architecture change. WPF is desktop-only. Would need operational transformation or CRDT algorithms for collaboration. State management becomes distributed. Estimated: 100+ hours.
 
-\textbf{Mitigation:} Our service layer is UI-agnostic, so domain logic could be reused. But UI and synchronization would be complete rewrites.
+\noindent\textbf{Mitigation:} Our service layer is UI-agnostic, so domain logic could be reused. But UI and synchronization would be complete rewrites.
 
 \paragraph{Dynamic Grid Obstacles}
 
 \textbf{Scenario:} Grid changes during execution (walls appear/disappear, moving obstacles).
 
-\textbf{Challenges:}
+\noindent\textbf{Challenges:}
 \begin{itemize}
     \item Grid currently immutable during execution
     \item Character checks grid state once per move
@@ -1145,13 +1141,13 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Path validation becomes continuous, not pre-checked
 \end{itemize}
 
-\textbf{Why difficult:} Current design assumes static grid. Would need reactive programming model. Character and Grid would need much tighter coupling. Condition evaluation becomes stateful. Estimated: 40-50 hours.
+\noindent\textbf{Why difficult:} Current design assumes static grid. Would need reactive programming model. Character and Grid would need much tighter coupling. Condition evaluation becomes stateful. Estimated: 40-50 hours.
 
 \paragraph{Natural Language Programming}
 
 \textbf{Scenario:} "Tell the cat to walk forward until it sees a wall, then turn around."
 
-\textbf{Challenges:}
+\noindent\textbf{Challenges:}
 \begin{itemize}
     \item Natural language parsing (NLP)
     \item Intent recognition and disambiguation
@@ -1161,7 +1157,7 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Training data and ML models
 \end{itemize}
 
-\textbf{Why difficult:} Completely different input paradigm. Would need NLP library or ML model. Our structured command system wasn't designed for fuzzy input. Ambiguity resolution requires AI. Estimated: 200+ hours plus ML expertise.
+\noindent\textbf{Why difficult:} Completely different input paradigm. Would need NLP library or ML model. Our structured command system wasn't designed for fuzzy input. Ambiguity resolution requires AI. Estimated: 200+ hours plus ML expertise.
 
 \subsection{Design Quality Summary}
 
@@ -1180,7 +1176,7 @@ Our design minimizes dependencies through careful interface design and dependenc
     \item Text-based program representation limits some visualizations
 \end{itemize}
 
-\textbf{Overall:} The design successfully balances simplicity with extensibility. It handles likely future changes well while acknowledging fundamental limitations for more radical changes.
+\noindent\textbf{Overall:} The design successfully balances simplicity with extensibility. It handles likely future changes well while acknowledging fundamental limitations for more radical changes.
 
 \section{Part 4: Testing}
 
@@ -1259,7 +1255,7 @@ UI (MainWindow, BlockEditor) & 48\% & 10 (manual) \\
 
 \textbf{Note:} UI coverage is lower because WPF components are tested primarily through manual system tests. Block editor UI logic is tested through converter tests and integration tests.
 
-\textbf{Block Editor Testing:} The BlockEditorConverterTests class contains 102 comprehensive tests covering:
+\noindent\textbf{Block Editor Testing:} The BlockEditorConverterTests class contains 102 comprehensive tests covering:
 \begin{itemize}[noitemsep]
     \item Individual command-to-block conversions (all types)
     \item Individual block-to-command conversions (all types)
@@ -1270,7 +1266,7 @@ UI (MainWindow, BlockEditor) & 48\% & 10 (manual) \\
     \item Edge cases (empty programs, null handling, deep nesting)
 \end{itemize}
 
-\textbf{Logging System Testing:} The LoggingTests class contains 14 tests covering:
+\noindent\textbf{Logging System Testing:} The LoggingTests class contains 14 tests covering:
 \begin{itemize}[noitemsep]
     \item Log file creation and directory setup
     \item All log levels (Debug, Info, Warning, Error)
@@ -1282,7 +1278,7 @@ UI (MainWindow, BlockEditor) & 48\% & 10 (manual) \\
     \item Thread-safe concurrent logging
 \end{itemize}
 
-\textbf{Note:} UI coverage is lower because WPF is tested primarily through manual system tests.
+\noindent\textbf{Note:} UI coverage is lower because WPF is tested primarily through manual system tests.
 
 \begin{figure}[H]
     \centering
@@ -1377,7 +1373,7 @@ As a user, I want to nest blocks inside container blocks & PASS & Unlimited nest
     \item Result: PASS
 \end{enumerate}
 
-\textbf{Scenario 2: Exercise Completion}
+\noindent\textbf{Scenario 2: Exercise Completion}
 \begin{enumerate}[noitemsep]
     \item Load exercise1\_simple.txt
     \item Load solution\_exercise1.txt program
@@ -1387,7 +1383,7 @@ As a user, I want to nest blocks inside container blocks & PASS & Unlimited nest
     \item Result: PASS
 \end{enumerate}
 
-\textbf{Scenario 3: Runtime Error Handling}
+\noindent\textbf{Scenario 3: Runtime Error Handling}
 \begin{enumerate}[noitemsep]
     \item Load exercise with blocked cells
     \item Create program that moves into blocked cell
@@ -1398,7 +1394,7 @@ As a user, I want to nest blocks inside container blocks & PASS & Unlimited nest
     \item Result: PASS
 \end{enumerate}
 
-\textbf{Scenario 4: RepeatUntil Execution}
+\noindent\textbf{Scenario 4: RepeatUntil Execution}
 \begin{enumerate}[noitemsep]
     \item Create program with RepeatUntil WallAhead
     \item Load exercise with walls
@@ -1408,7 +1404,7 @@ As a user, I want to nest blocks inside container blocks & PASS & Unlimited nest
     \item Result: PASS
 \end{enumerate}
 
-\textbf{Scenario 5: Program Export}
+\noindent\textbf{Scenario 5: Program Export}
 \begin{enumerate}[noitemsep]
     \item Load any program
     \item Click File → Export
@@ -1432,7 +1428,7 @@ As a user, I want to nest blocks inside container blocks & PASS & Unlimited nest
     \item Fast execution (<5 seconds for all 110 tests)
 \end{itemize}
 
-\textbf{Weaknesses:}
+\noindent\textbf{Weaknesses:}
 \begin{itemize}
     \item UI testing mostly manual (hard to automate WPF)
     \item Some integration scenarios not covered
@@ -1450,7 +1446,7 @@ As a user, I want to nest blocks inside container blocks & PASS & Unlimited nest
     \item Manual test document kept us organized
 \end{itemize}
 
-\textbf{What Didn't Work:}
+\noindent\textbf{What Didn't Work:}
 \begin{itemize}
     \item Retrofitting tests to UI was difficult
     \item Some tests became brittle when refactoring
@@ -1484,10 +1480,6 @@ Testing revealed several bugs that were fixed:
 All bugs were found through testing before release, validating our testing approach.
 
 \section{Part 5: Work Distribution \& Retrospective}
-
-\subsection{Repository Access}
-
-TA [TA Name] was added to the repository on [Date] with read access. The repository shows authentic commit history spanning 20 days with ~65 commits distributed evenly between team members.
 
 \subsection{Task Distribution}
 
@@ -1586,7 +1578,7 @@ Meeting coordination & 50\% & 50\% \\
 \midrule
 \textbf{Overall Contribution} & \textbf{52\%} & \textbf{48\%} \\
 \end{longtable}
-\textbf{Summary:} Tijmen focused more on exercise model, UI foundation, and export features. Ilyas concentrated on grid system, visualization, and logging. Both contributed equally to design, testing, and documentation.
+\noindent\textbf{Summary:} Tijmen focused more on exercise model, UI foundation, and export features. Ilyas concentrated on grid system, visualization, and logging. Both contributed equally to design, testing, and documentation.
 
 \subsection{Retrospective}
 
@@ -1617,7 +1609,7 @@ Daily stand-ups (even 10 minutes via chat) kept us synchronized. We always knew 
 \subsubsection{What Didn't Go Well}
 
 \paragraph{UI Underestimation}
-We allocated 30 hours for UI, but it took 45 hours. WPF has a steeper learning curve than expected, especially canvas manipulation and coordinate transformations.
+We allocated 10 hours for UI, but it took 15 hours. WPF has a steeper learning curve than expected, especially canvas manipulation and coordinate transformations.
 
 \paragraph{Merge Conflicts}
 Despite feature branches, we had 3 significant merge conflicts:
@@ -1684,15 +1676,15 @@ Complex features (RepeatUntil, grid visualization) benefited from pair programmi
 
 \textbf{Tijmen:} Significantly improved UI development skills and learned WPF. Better understanding of design patterns through practical application. Improved estimation accuracy.
 
-\textbf{Ilyas:} Developed stronger testing discipline and learned Observer pattern implementation. Improved code review skills and learned to give constructive feedback.
+\noindent\textbf{Ilyas:} Developed stronger testing discipline and learned Observer pattern implementation. Improved code review skills and learned to give constructive feedback.
 
-\textbf{Both:} Enhanced collaboration skills, learned realistic project planning, and gained appreciation for software engineering principles beyond just coding.
+\noindent\textbf{Both:} Enhanced collaboration skills, learned realistic project planning, and gained appreciation for software engineering principles beyond just coding.
 
 \section{Conclusion}
 
 This iteration successfully extended our programming learning application with significant new features while maintaining code quality and design integrity. The WPF interface makes the application accessible to non-technical users, the dual-mode programming environment (text and visual blocks) supports different learning styles and skill levels, pathfinding exercises provide engaging challenges, and the RepeatUntil command adds important programming concepts.
 
-\textbf{Major Achievements:}
+\noindent\textbf{Major Achievements:}
 \begin{itemize}
     \item \textbf{Dual-Mode Programming:} Seamless integration of text-based and block-based programming with bidirectional synchronization, making programming accessible to beginners while supporting progression to text-based coding
     \item \textbf{Visual Block Editor:} Drag-and-drop interface with nested container blocks, parameter editing, and real-time feedback eliminates syntax errors for novice programmers
