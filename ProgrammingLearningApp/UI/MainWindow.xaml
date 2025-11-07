@@ -43,6 +43,12 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="AnimationButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="MinWidth" Value="40"/>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -67,6 +73,10 @@
             <MenuItem Header="Exercise">
                 <MenuItem Header="Load Exercise..." Click="LoadExercise_Click"/>
                 <MenuItem Header="Clear Exercise" Click="ClearExercise_Click"/>
+            </MenuItem>
+            <MenuItem Header="Animation">
+                <MenuItem Header="Reload Frames" Click="LoadSprites_Click"/>
+                <MenuItem Header="Open Frames Folder" Click="OpenSpritesFolder_Click"/>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Click="About_Click"/>
@@ -141,6 +151,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="5"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -161,7 +172,84 @@
                             </StackPanel>
                         </Border>
 
-                        <Canvas x:Name="GridCanvas" Grid.Row="1" 
+                        <!-- Animation Controls -->
+                        <Border Grid.Row="1" Background="#f9f9f9" Padding="10" 
+                               BorderBrush="#e0e0e0" BorderThickness="0,1"
+                               Visibility="Collapsed" x:Name="AnimationControlsPanel">
+                            <StackPanel>
+                                <!-- Playback Controls -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                                    <Button x:Name="StepBackButton" Content="⏮" ToolTip="Step Backward"
+                                           Style="{StaticResource AnimationButton}" 
+                                           Click="StepBackButton_Click"/>
+                                    <Button x:Name="PlayButton" Content="▶" ToolTip="Play Animation"
+                                           Style="{StaticResource AnimationButton}" 
+                                           Click="PlayButton_Click"/>
+                                    <Button x:Name="PauseButton" Content="⏸" ToolTip="Pause Animation"
+                                           Style="{StaticResource AnimationButton}" 
+                                           Click="PauseButton_Click" 
+                                           IsEnabled="False"/>
+                                    <Button x:Name="StopButton" Content="⏹" ToolTip="Stop Animation"
+                                           Style="{StaticResource AnimationButton}" 
+                                           Click="StopButton_Click"/>
+                                    <Button x:Name="StepForwardButton" Content="⏭" ToolTip="Step Forward"
+                                           Style="{StaticResource AnimationButton}" 
+                                           Click="StepForwardButton_Click"/>
+                                </StackPanel>
+
+                                <!-- Progress and Speed -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Progress -->
+                                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                        <TextBlock x:Name="AnimationProgressText" 
+                                                  Text="Step: 0 / 0"
+                                                  FontSize="11" 
+                                                  HorizontalAlignment="Center"
+                                                  Margin="0,0,0,3"/>
+                                        <Slider x:Name="AnimationProgressSlider"
+                                               Minimum="0" Maximum="0" Value="0"
+                                               TickFrequency="1" 
+                                               IsSnapToTickEnabled="True"
+                                               ValueChanged="AnimationProgressSlider_ValueChanged"/>
+                                    </StackPanel>
+
+                                    <!-- Speed Control -->
+                                    <StackPanel Grid.Column="1" Width="120">
+                                        <TextBlock Text="Speed" 
+                                                  FontSize="11" 
+                                                  HorizontalAlignment="Center"
+                                                  Margin="0,0,0,3"/>
+                                        <Slider x:Name="AnimationSpeedSlider"
+                                               Minimum="100" Maximum="2000" Value="500"
+                                               TickFrequency="100"
+                                               IsSnapToTickEnabled="True"
+                                               ValueChanged="AnimationSpeedSlider_ValueChanged"/>
+                                        <TextBlock x:Name="SpeedText" 
+                                                  Text="500 ms"
+                                                  FontSize="10" 
+                                                  HorizontalAlignment="Center"
+                                                  Foreground="#666"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Current Step Description -->
+                                <TextBlock x:Name="CurrentStepText" 
+                                          Text=""
+                                          FontSize="11"
+                                          FontStyle="Italic"
+                                          Foreground="#555"
+                                          HorizontalAlignment="Center"
+                                          Margin="0,5,0,0"
+                                          TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Canvas x:Name="GridCanvas" Grid.Row="2" 
                                Background="White" Margin="10"
                                SizeChanged="GridCanvas_SizeChanged"/>
                     </Grid>
@@ -204,6 +292,10 @@
             <Separator/>
             <StatusBarItem>
                 <TextBlock x:Name="ExerciseStatusText" Text="No exercise loaded"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="AnimationStatusText" Text="No animation"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>

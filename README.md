@@ -12,6 +12,8 @@ CodeCat is an educational application that allows users to create, execute, and 
 - **🧩 Visual Block Editor**: Drag-and-drop interface for creating programs without syntax errors
 - **📝 Text Code Editor**: Traditional text-based programming with real-time syntax validation
 - **🎯 Visual Grid-Based Exercises**: Load and solve pathfinding challenges on customizable grids
+- **🎬 Step-by-Step Animation**: Watch your program execute one command at a time with playback controls
+- **🖼️ Custom Character Sprites**: Load your own images for the character in each direction
 - **▶️ Real-Time Execution**: See the character navigate the grid as the program executes
 - **📊 Program Metrics**: Calculate complexity metrics (command count, nesting level, repeat count)
 - **💾 Multiple Export Formats**: Export programs to Text, JSON, or HTML formats
@@ -46,6 +48,9 @@ ProgrammingLearningApp/
 │   │   ├── ProgramFactory.cs               # Factory for creating example programs
 │   │   ├── ProgramImporter.cs              # Import programs from text files
 │   │   ├── ProgramRunner.cs                # Execute programs with or without grids
+│   │   ├── AnimatedProgramRunner.cs        # Step-by-step execution for animation
+│   │   ├── AnimationController.cs          # Manage animation playback and state
+│   │   ├── CharacterSpriteLoader.cs        # Load and cache character sprite images
 │   │   ├── GridFileParser.cs               # Parse grid exercise files
 │   │   ├── IProgramExporter.cs             # Exporter interface
 │   │   ├── Exporters/
@@ -105,6 +110,8 @@ ProgrammingLearningApp/
 │       ├── domain_model.png                # Domain model UML diagram
 │       ├── ui_components.png               # UI architecture diagram
 │       └── services_diagram.png            # Services layer diagram
+├── ANIMATION_GUIDE.md                      # Animation system documentation
+├── SPRITE_CREATION_GUIDE.md                # Guide for creating character sprites
 ├── LOGGING_GUIDE.md                        # Comprehensive logging documentation
 └── README.md                               # This file
 ```
@@ -166,6 +173,7 @@ The application features a modern WPF interface with:
 1. **Menu Bar**
    - **File Menu**: Load Program, Load Examples (Basic/Advanced/Expert), Export Program, Exit
    - **Exercise Menu**: Load Exercise, Clear Exercise
+   - **Animation Menu**: Load Sprites, Open Sprites Folder
    - **Help Menu**: About
 
 2. **Editor Panel** (Left Side) - **NEW: Tabbed Interface**
@@ -181,6 +189,9 @@ The application features a modern WPF interface with:
 4. **Grid Canvas** (Center Right)
    - Visual representation of the exercise grid
    - Shows character position and path
+   - **Animation Controls**: Play, Pause, Stop, Step Forward/Backward buttons
+   - **Speed Slider**: Adjust animation playback speed (100-2000ms)
+   - **Progress Bar**: Track current step in the animation
    - Color-coded cells:
      - White: Walkable cells
      - Dark Gray: Blocked cells
@@ -434,6 +445,65 @@ Repeat 2 times          ← Repeat #1, Level 1
 - Max Nesting Level: 2
 - Repeat Count: 2
 
+## Animation System
+
+### Overview
+
+The animation system allows you to watch your program execute **step-by-step**, making it easier to understand program flow and debug issues. See every move, turn, and loop iteration as they happen!
+
+### Using Animation
+
+1. **Load an Exercise** - Animation requires a grid exercise to be loaded
+2. **Run Your Program** - Click the `▶ Run` button
+3. **Animation Controls Appear** - A new panel with playback controls will show
+
+### Animation Controls
+
+- **▶ Play**: Start automatic playback at the selected speed
+- **⏸ Pause**: Pause the animation at the current step
+- **⏹ Stop**: Stop and reset to the beginning
+- **⏭ Step Forward**: Manually advance one step
+- **⏮ Step Backward**: Go back one step
+- **Progress Slider**: Jump to any step by dragging
+- **Speed Slider**: Adjust playback speed (100-2000ms per step)
+
+### Animation Features
+
+- **Detailed Step Tracking**: See position, direction, and command at each step
+- **Move commands are broken down**: `Move 3` becomes 3 individual steps
+- **Visual Progress**: Current step counter (e.g., "Step 5 / 20")
+- **Command Description**: Shows what's happening at each step
+- **Sprite Support**: Use custom character images (optional)
+
+### Custom Character Sprites
+
+Make your programs come alive with custom character images!
+
+#### Quick Setup
+
+1. Click `Animation → Open Sprites Folder`
+2. In the 4 folder put each numbered frame:
+   - `1.png` - Frame 1
+   - `2.png` - Frame 2
+   - etc
+3. Click Reloud frames
+
+#### Sprite Requirements
+
+- **Format**: PNG with transparency (recommended)
+- **Size**: 64x64 or 128x128 pixels (square)
+- **Naming**: Must follow the pattern above
+- **Direction**: North sprite should face upward ↑
+
+### Animation Tips
+
+- **Learning**: Use slow speeds (1000-2000ms) to understand each step
+- **Debugging**: Use Step Forward/Backward to examine problem areas
+- **Demonstrations**: Medium speed (500ms) works well for presentations
+- **Quick Review**: Fast speed (100-300ms) for a rapid overview
+
+See [ANIMATION_GUIDE.md](ANIMATION_GUIDE.md) for complete documentation.
+
 ## Design Patterns
 
 The application demonstrates several software design patterns:
@@ -594,19 +664,24 @@ Potential areas for expansion:
   - Condition selector for RepeatUntil blocks (dropdown UI)
   - Block categories and search functionality
   - Color themes for blocks
-  - Block animations during execution
   - Save/load block layouts as images
+- **Animation Enhancements**:
+  - Breakpoints for pausing at specific commands
+  - Path trails showing where the character has been
+  - Smooth interpolation between cells
+  - Export animation as GIF or video
+  - Sound effects for moves and turns
+  - Animated sprite frames (walking cycles)
 - **Programming Features**:
   - Additional conditions for RepeatUntil (e.g., EndReached, ColorDetected)
   - Variable support for storing values
   - Conditional if/else blocks
   - Function/procedure definition blocks
 - **UI Improvements**:
-  - Visual step-by-step debugger with breakpoints
-  - Animated execution with speed control
   - Split-view showing both text and blocks simultaneously
   - Undo/redo functionality for block operations
   - Block palette customization
+  - Command highlighting in text editor during animation
 - **Content**:
   - More built-in exercises with difficulty levels
   - Custom grid editor for creating exercises
