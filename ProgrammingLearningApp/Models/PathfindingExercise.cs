@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProgrammingLearningApp.Models
+﻿namespace ProgrammingLearningApp.Models
 {
 	public class PathfindingExercise
 	{

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ProgrammingLearningApp
 {
 	public static class ProgramFactory

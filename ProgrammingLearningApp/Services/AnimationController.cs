@@ -1,5 +1,3 @@
-using ProgrammingLearningApp.Models;
-
 namespace ProgrammingLearningApp.Services
 {
 	public enum AnimationState

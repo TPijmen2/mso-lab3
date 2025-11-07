@@ -1,6 +1,4 @@
 using ProgrammingLearningApp.Commands;
-using ProgrammingLearningApp.Models;
-using System.Collections.Generic;
 
 namespace ProgrammingLearningApp.Services
 {

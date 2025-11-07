@@ -8,18 +8,18 @@ CodeCat is an educational application that allows users to create, execute, and 
 
 ## Key Features
 
-- **🎨 Dual Programming Modes**: Switch seamlessly between text-based and visual block-based programming
-- **🧩 Visual Block Editor**: Drag-and-drop interface for creating programs without syntax errors
-- **📝 Text Code Editor**: Traditional text-based programming with real-time syntax validation
-- **🎯 Visual Grid-Based Exercises**: Load and solve pathfinding challenges on customizable grids
-- **🎬 Step-by-Step Animation**: Watch your program execute one command at a time with playback controls
-- **🖼️ Custom Character Sprites**: Load your own images for the character in each direction
-- **▶️ Real-Time Execution**: See the character navigate the grid as the program executes
-- **📊 Program Metrics**: Calculate complexity metrics (command count, nesting level, repeat count)
-- **💾 Multiple Export Formats**: Export programs to Text, JSON, or HTML formats
-- **📚 Built-in Examples**: Pre-loaded basic, advanced, and expert example programs
-- **🔍 Comprehensive Logging**: All actions are logged for debugging and analysis
-- **🖥️ Interactive UI**: Full WPF interface with tabbed editor, menu system, and grid visualization
+- **Dual Programming Modes**: Switch seamlessly between text-based and visual block-based programming
+- **Visual Block Editor**: Drag-and-drop interface for creating programs without syntax errors
+- **Text Code Editor**: Traditional text-based programming with real-time syntax validation
+- **Visual Grid-Based Exercises**: Load and solve pathfinding challenges on customizable grids
+- **Step-by-Step Animation**: Watch your program execute one command at a time with playback controls
+- **Custom Character Sprites**: Load your own images for the character in each direction
+- **Real-Time Execution**: See the character navigate the grid as the program executes
+- **Program Metrics**: Calculate complexity metrics (command count, nesting level, repeat count)
+- **Multiple Export Formats**: Export programs to Text, JSON, or HTML formats
+- **Built-in Examples**: Pre-loaded basic, advanced, and expert example programs
+- **Comprehensive Logging**: All actions are logged for debugging and analysis
+- **Interactive UI**: Full WPF interface with tabbed editor, menu system, and grid visualization
 
 ## Project Structure
 
@@ -116,18 +116,7 @@ ProgrammingLearningApp/
 └── README.md                               # This file
 ```
 
-## Technology Stack
-
-- **.NET 9** (net9.0-windows)
-- **WPF** (Windows Presentation Foundation)
-- **xUnit** (Testing framework)
-- **C# 12** with nullable reference types enabled
-
 ## How to Build and Run
-
-### Prerequisites
-- Visual Studio 2022 (17.8 or later) OR .NET 9 SDK
-- Windows OS (WPF requirement)
 
 ### Building the Project
 
@@ -176,15 +165,15 @@ The application features a modern WPF interface with:
    - **Animation Menu**: Load Sprites, Open Sprites Folder
    - **Help Menu**: About
 
-2. **Editor Panel** (Left Side) - **NEW: Tabbed Interface**
+2. **Editor Panel** (Left Side)
    - **Text Tab**: Traditional text editor with syntax validation and real-time feedback
    - **Blocks Tab**: Visual drag-and-drop block programming interface
    - Seamless switching between programming modes
 
 3. **Control Panel** (Below Editor)
-   - **▶ Run**: Execute the program from either text or blocks
-   - **📊 Metrics**: Calculate program complexity metrics
-   - **🗑 Clear**: Clear the editor and output
+   - **Run**: Execute the program from either text or blocks
+   - **Metrics**: Calculate program complexity metrics
+   - **Clear**: Clear the editor and output
 
 4. **Grid Canvas** (Center Right)
    - Visual representation of the exercise grid
@@ -238,7 +227,7 @@ The application features a modern WPF interface with:
 1. Switch to the **Text** tab
 2. Type your program directly in the editor
 3. The status bar shows real-time syntax validation
-4. Click **▶ Run** to execute
+4. Click **Run** to execute
 
 ### Block-Based Programming
 
@@ -277,14 +266,14 @@ The visual block editor provides color-coded, draggable blocks:
 **Creating Programs:**
 1. Drag blocks from the left **palette** to the right **work area**
 2. Blocks snap into place vertically
-3. Each block shows an **✕** button to delete it
+3. Each block shows an **X** button to delete it
 
 **Working with Container Blocks:**
 1. Drag a Repeat or Repeat Until block to the work area
 2. The block shows a shaded container area with "Drop blocks here"
 3. Drag child blocks into this container area
 4. Child blocks can include other Repeat blocks (nesting)
-5. Delete child blocks individually with their ✕ buttons
+5. Delete child blocks individually with their X buttons
 
 **Editing Parameters:**
 - Click on any number in a block to edit it
@@ -428,7 +417,7 @@ The exporter will automatically use the appropriate format based on the file ext
 
 ### Program Metrics
 
-Click the **📊 Metrics** button (works from both Text and Blocks tabs) to see:
+Click the **Metrics** button (works from both Text and Blocks tabs) to see:
 
 1. **Total Commands**: Number of all commands (including Repeat itself)
 2. **Max Nesting Level**: Deepest level of nested Repeat commands
@@ -454,16 +443,16 @@ The animation system allows you to watch your program execute **step-by-step**, 
 ### Using Animation
 
 1. **Load an Exercise** - Animation requires a grid exercise to be loaded
-2. **Run Your Program** - Click the `▶ Run` button
+2. **Run Your Program** - Click the `Run` button
 3. **Animation Controls Appear** - A new panel with playback controls will show
 
 ### Animation Controls
 
-- **▶ Play**: Start automatic playback at the selected speed
-- **⏸ Pause**: Pause the animation at the current step
-- **⏹ Stop**: Stop and reset to the beginning
-- **⏭ Step Forward**: Manually advance one step
-- **⏮ Step Backward**: Go back one step
+- **Play**: Start automatic playback at the selected speed
+- **Pause**: Pause the animation at the current step
+- **Stop**: Stop and reset to the beginning
+- **Step Forward**: Manually advance one step
+- **Step Backward**: Go back one step
 - **Progress Slider**: Jump to any step by dragging
 - **Speed Slider**: Adjust playback speed (100-2000ms per step)
 

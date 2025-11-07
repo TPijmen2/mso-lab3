@@ -1,13 +1,8 @@
-using ProgrammingLearningApp.Models;
+using ProgrammingLearningApp.Commands;
 using ProgrammingLearningApp.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using ProgrammingLearningApp.Commands;
 
 namespace ProgrammingLearningApp.UI.Controls
 {

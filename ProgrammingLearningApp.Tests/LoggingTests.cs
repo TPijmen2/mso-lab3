@@ -1,7 +1,5 @@
 ﻿using ProgrammingLearningApp.Services;
 using ProgrammingLearningApp.Services.Logger;
-using System;
-using System.IO;
 using Xunit;
 
 namespace ProgrammingLearningApp.Tests

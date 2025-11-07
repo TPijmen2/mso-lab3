@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProgrammingLearningApp.Models
+﻿namespace ProgrammingLearningApp.Models
 {
 	public class Grid
 	{

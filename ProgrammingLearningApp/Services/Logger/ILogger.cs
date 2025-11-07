@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProgrammingLearningApp.Services.Logger
+﻿namespace ProgrammingLearningApp.Services.Logger
 {
 	public interface ILogger
 	{

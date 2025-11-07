@@ -1,5 +1,3 @@
-using System;
-
 namespace ProgrammingLearningApp
 {
 	public enum Direction

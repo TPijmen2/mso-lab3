@@ -1,8 +1,4 @@
-﻿using ProgrammingLearningApp;
-using ProgrammingLearningApp.Commands;
-using ProgrammingLearningApp.Models;
-using ProgrammingLearningApp.Services;
-using System.IO;
+﻿using ProgrammingLearningApp.Services;
 using Xunit;
 
 namespace ProgrammingLearningApp.Tests

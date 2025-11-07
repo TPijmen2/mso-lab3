@@ -1,6 +1,5 @@
 using System.IO;
 using System.Windows.Media.Imaging;
-using ProgrammingLearningApp.Models;
 
 namespace ProgrammingLearningApp.Services
 {

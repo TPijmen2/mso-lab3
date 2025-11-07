@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProgrammingLearningApp.Exceptions
+﻿namespace ProgrammingLearningApp.Exceptions
 {
 	public class OutOfBoundsException : Exception
 	{

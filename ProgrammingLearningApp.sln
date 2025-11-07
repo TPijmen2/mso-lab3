@@ -7,7 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		ANIMATION_GUIDE.md = ANIMATION_GUIDE.md
-		generate_commits.py = generate_commits.py
 		LOGGING_GUIDE.md = LOGGING_GUIDE.md
 		README.md = README.md
 	EndProjectSection
@@ -35,14 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePrograms", "SamplePro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{901659E2-211C-4BBE-98FD-1D05DB69D4E2}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\Lab2Report.tex = Docs\Lab2Report.tex
 		Docs\Lab3Report.tex = Docs\Lab3Report.tex
-		Docs\ManualTestResults.xlsx = Docs\ManualTestResults.xlsx
-		Docs\MSO Practicumopdracht 3 2025.pdf = Docs\MSO Practicumopdracht 3 2025.pdf
-		Docs\TestScenarios.md = Docs\TestScenarios.md
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{1AD388B3-B7D3-4F95-B4AC-9246EC17E178}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,7 +59,6 @@ Global
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{F1F1BF7A-F4A3-4A26-B808-DE64EC0284AB} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{901659E2-211C-4BBE-98FD-1D05DB69D4E2} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
-		{1AD388B3-B7D3-4F95-B4AC-9246EC17E178} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B321A829-E0C1-4B05-B461-43D61220707A}

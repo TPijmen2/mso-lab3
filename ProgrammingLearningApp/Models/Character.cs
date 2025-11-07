@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ProgrammingLearningApp.Exceptions;
 
 namespace ProgrammingLearningApp.Models
